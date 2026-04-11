@@ -281,10 +281,14 @@ input[type=color]{width:32px;height:29px;padding:2px;border:1px solid var(--id);
 
   <!-- Linha 2: selecionar arquivo (só modo local) -->
   <div id="bc-local-row" style="display:flex;flex-direction:column;gap:4px;padding:6px 10px;border-bottom:1px solid var(--sep)">
-    <label style="position:relative;display:flex;align-items:center;gap:7px;padding:6px 9px;border:1px dashed var(--bd1);border-radius:6px;cursor:pointer;color:var(--tx3);font-size:11px;font-weight:700">
-      📂 Selecionar PRICETAB.TXT
-      <input type="file" accept=".txt,.TXT" id="bc-local-file" style="position:absolute;inset:0;opacity:0;cursor:pointer" onchange="loadPriceTab(this)">
-    </label>
+    <div style="display:flex;gap:5px;align-items:center">
+      <label style="position:relative;display:flex;align-items:center;gap:5px;padding:5px 8px;border:1px dashed var(--bd1);border-radius:6px;cursor:pointer;color:var(--tx3);font-size:10px;font-weight:700;flex:1;min-width:0">
+        📂 <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="bc-file-name">Selecionar PRICETAB.TXT</span>
+        <input type="file" accept=".txt,.TXT" id="bc-local-file" style="position:absolute;inset:0;opacity:0;cursor:pointer" onchange="loadPriceTab(this)">
+      </label>
+      <button id="bc-refresh-btn" title="Recarregar arquivo" onclick="reloadPriceTab()"
+        style="flex-shrink:0;padding:5px 10px;border:1px solid var(--bd1);border-radius:6px;background:var(--bg3);color:var(--tx3);cursor:pointer;font-size:13px;font-weight:700;opacity:.4;pointer-events:none">↺</button>
+    </div>
     <div id="bc-local-status" style="font-size:10px;color:var(--tx4);text-align:center;min-height:14px"></div>
   </div>
 
@@ -359,6 +363,12 @@ onkeydown="if(event.key==='Enter'){event.preventDefault();addTag();setTimeout(()
 <div class="qph"><span>Pré-visualização</span><span id="q-dim" style="color:var(--tx3);font-size:9px">90×55mm</span></div>
 <div class="qpb"><div id="q-prev"></div></div>
 </div>
+
+<!-- PRESETS -->
+<div class="card" id="c-presets"><div class="cah" onclick="tcard('c-presets')"><span class="cai">🎨</span><div class="cam"><div class="cat">Presets</div><div class="cas">Templates e configurações prontas</div></div><div class="car"><span class="caa">▾</span></div></div>
+<div class="cab">
+<div class="tg" id="tpl-grid"></div>
+</div></div>
 
 <!-- SAVE -->
 <div class="card" id="c-save"><div class="cah" onclick="tcard('c-save')"><span class="cai">💾</span><div class="cam"><div class="cat">Configurações salvas</div><div class="cas">Auto-salva ao modificar</div></div><div class="car"><span class="caa">▾</span></div></div>
@@ -494,8 +504,6 @@ onkeydown="if(event.key==='Enter'){event.preventDefault();addTag();setTimeout(()
 <div class="r2"><div class="fld"><label class="lbl">Fundo etiqueta</label><div class="cr2"><input type="color" id="c-bg" value="#ffffff" oninput="cpc('c-bg','c-bg-t')"><input type="text" id="c-bg-t" value="#ffffff" oninput="ctc('c-bg','c-bg-t')"></div><div class="sws" id="sw-bg"></div></div><div class="fld"><label class="lbl">Borda</label><div class="cr2"><input type="color" id="c-bd" value="#cccccc" oninput="cpc('c-bd','c-bd-t')"><input type="text" id="c-bd-t" value="#cccccc" oninput="ctc('c-bd','c-bd-t')"></div></div></div>
 <div class="slr">Espessura borda <span class="slv" id="v-bw">1px</span></div><input type="range" id="s-bw" min="0" max="6" value="1" step="1" oninput="sl('v-bw',this.value,'px')">
 <div class="slr">Padding interno <span class="slv" id="v-pd">6px</span></div><input type="range" id="s-pd" min="2" max="20" value="6" step="1" oninput="sl('v-pd',this.value,'px')">
-<div class="sep"></div>
-<div class="tg" id="tpl-grid"></div>
 <div class="sep"></div>
 <button class="btn" onclick="copyStyleAll()">Copiar estilo → todas as etiquetas</button>
 <button class="btn" onclick="autoGrid()">⊞ Distribuir em grade</button>
@@ -673,11 +681,6 @@ function onBCDigit(v){
   const clean=v.replace(/\D/g,'');
   if(G('bc-in').value!==clean)G('bc-in').value=clean;
   G('bc-clr-btn').classList.toggle('vis',clean.length>0);
-  if(priceTabMode){
-    if(clean.length>=3)bcTimer=setTimeout(()=>doFetch(clean),350);
-  }else{
-    if(clean.length>=8&&clean.length<=14)bcTimer=setTimeout(()=>doFetch(clean),350);
-  }
 }
 function onBCKey(e){
   if(e.key!=='Enter')return;
@@ -685,7 +688,7 @@ function onBCKey(e){
   if(bcProduct)applyBCProduct();
   else{
     const minLen=priceTabMode?1:7;
-    if(V('bc-in').length>=minLen){clearTimeout(bcTimer);doFetch(V('bc-in'));}
+    if(V('bc-in').length>=minLen)doFetch(V('bc-in'));
   }
 }
 
@@ -910,29 +913,36 @@ function parsePriceTab(text){
 
 function loadPriceTab(input){
   const file=input.files[0];if(!file)return;
+  _lastPriceTabFile=file;
+  const nameEl=G('bc-file-name');if(nameEl)nameEl.textContent=file.name;
+  const btn=G('bc-refresh-btn');if(btn){btn.style.opacity='1';btn.style.pointerEvents='';}
+  _readPriceTabFile(file);
+}
+let _lastPriceTabFile=null;
+function reloadPriceTab(){
+  if(!_lastPriceTabFile){st('Nenhum arquivo carregado','err');return;}
+  st('Recarregando…');
+  _readPriceTabFile(_lastPriceTabFile);
+}
+function _readPriceTabFile(file){
   const statusEl=G('bc-local-status');
-  statusEl.textContent='Carregando…';statusEl.style.color='var(--tx3)';
+  if(statusEl){statusEl.textContent='Carregando…';statusEl.style.color='var(--tx3)';}
   const reader=new FileReader();
   reader.onload=function(e){
     try{
       priceTabData=parsePriceTab(e.target.result);
-      const count=new Set([...priceTabData.keys()].map(k=>k)).size;
-      // Conta entradas únicas (pode ter duplicado por zero-strip)
       const uniq=new Set();
       for(const[k,v]of priceTabData)uniq.add(v.desc);
-      statusEl.textContent=`✓ ${uniq.size} produtos carregados`;
-      statusEl.style.color='#4ade80';
+      if(statusEl){statusEl.textContent=`✓ ${uniq.size} produtos carregados`;statusEl.style.color='#4ade80';}
       st(`PRICETAB: ${uniq.size} produtos prontos`,'ok');
     }catch(err){
-      statusEl.textContent='⚠ Erro ao ler o arquivo';
-      statusEl.style.color='#f87171';
+      if(statusEl){statusEl.textContent='⚠ Erro ao ler o arquivo';statusEl.style.color='#f87171';}
       st('Erro ao processar PRICETAB','err');
     }
   };
   reader.onerror=function(){
-    statusEl.textContent='⚠ Erro ao ler o arquivo';statusEl.style.color='#f87171';
+    if(statusEl){statusEl.textContent='⚠ Erro ao ler o arquivo';statusEl.style.color='#f87171';}
   };
-  // Tenta Latin-1 (Windows-1252) — padrão de sistemas PDV brasileiros
   reader.readAsText(file,'windows-1252');
 }
 
@@ -1141,7 +1151,9 @@ function reSum(){
 const TPLS=[{n:'Padrão P&B',bg:'#ffffff',tx:'#111111',pr:'#000000',bd:'#cccccc',bw:1,pd:6,font:'Arial,sans-serif',szD:8,szP:30,szU:10,sBg:'#ffffff',sTx:'#000000',szS:10},{n:'Etiqueta c/ Barras',bg:'#ffffff',tx:'#111111',pr:'#000000',bd:'#cccccc',bw:1,pd:6,font:'Arial,sans-serif',szD:8,szP:33,szU:10,sBg:'#ffffff',sTx:'#000000',szS:10}];
 
 
-(()=>{const gr=G('tpl-grid');TPLS.forEach((t,i)=>{const d=document.createElement('div');d.className='tp';d.innerHTML=`<div class="tpv"><div style="height:8px;background:${t.sBg};display:flex;align-items:center;justify-content:center"><span style="font-size:4px;color:${t.sTx};font-weight:700">MERCADO</span></div><div style="flex:1;background:${t.bg};display:flex;align-items:center;justify-content:center;font-family:${t.font};color:${t.pr};font-weight:700;font-size:9px">R$9,99</div></div><div class="tpn">${t.n}</div>`;d.onclick=()=>applyTpl(i);gr.appendChild(d);});})();
+(()=>{const gr=G('tpl-grid');if(!gr)return;
+TPLS.forEach((t,i)=>{const d=document.createElement('div');d.className='tp';d.innerHTML=`<div class="tpv"><div style="height:8px;background:${t.sBg};display:flex;align-items:center;justify-content:center"><span style="font-size:4px;color:${t.sTx};font-weight:700">MERCADO</span></div><div style="flex:1;background:${t.bg};display:flex;align-items:center;justify-content:center;font-family:${t.font};color:${t.pr};font-weight:700;font-size:9px">R$9,99</div></div><div class="tpn">${t.n}</div>`;d.onclick=()=>applyTpl(i);gr.appendChild(d);});
+})();
 
 function mkSw(cid,a,b,cols){const c=G(cid);if(!c)return;cols.forEach(col=>{const d=document.createElement('div');d.className='sw2';d.style.background=col;if(col==='#ffffff')d.style.border='1px solid #aaa';d.onclick=()=>{set2(a,b,col);liveUp();};c.appendChild(d);});}
 mkSw('sw-bg','c-bg','c-bg-t',['#fff','#fffde7','#e3f2fd','#f0fdf4','#fce4ec','#111827','#1e3a8a','#7f1d1d']);
@@ -1910,6 +1922,29 @@ function upCount(){const n=tags.length;G('cnt').textContent=n+' etiqueta'+(n!==1
 
 function saveConf(){try{localStorage.setItem('etiq_v25',JSON.stringify(getCfg()));st('Configurações salvas!','ok');}catch(e){st('Erro','err');}}
 function loadConf(){try{const s=localStorage.getItem('etiq_v25');if(!s){st('Nenhuma config salva');return;}applyConf(JSON.parse(s));st('Carregado!','ok');}catch(e){st('Erro','err');}}
+function loadPreset(name){
+  if(!PRESETS[name])return;
+  saveUndo();
+  applyConf(PRESETS[name]);
+  reSum();updP();
+  // Aplica à etiqueta selecionada (incluindo tamanho)
+  if(sel!==null){
+    const t=tags.find(t=>t.id===sel);
+    if(t){Object.assign(t,getCfg());applyStyle(t);}
+  }
+  liveUp();
+  st('Preset "'+name+'" aplicado!','ok');
+}
+function renderPresets(){
+  const gr=G('tpl-grid');if(!gr)return;
+  Object.keys(PRESETS).forEach(name=>{
+    const p=PRESETS[name];
+    const d=document.createElement('div');d.className='tp';
+    d.innerHTML=`<div class="tpv"><div style="height:8px;background:${p.sBg||'#fff'};display:flex;align-items:center;justify-content:center;border-bottom:1px solid #eee"><span style="font-size:4px;color:${p.sTx||'#000'};font-weight:700">${p.storeName||'LOJA'}</span></div><div style="flex:1;background:${p.bg||'#fff'};display:flex;align-items:center;justify-content:center;font-family:${p.font||'Arial'};color:${p.pr||'#000'};font-weight:700;font-size:9px">R$${p.price||'9,99'}</div></div><div class="tpn">${name}</div>`;
+    d.onclick=()=>loadPreset(name);
+    gr.appendChild(d);
+  });
+}
 function applyConf(c){
   const sv=(id,v)=>{if(v!=null&&G(id))G(id).value=v;};
   sv('f-desc',c.desc);sv('q-desc',c.desc);sv('f-price',c.price);sv('q-price',c.price);sv('f-unit',c.unit);sv('q-unit',c.unit);sv('f-old',c.oldPrice);sv('q-old',c.oldPrice||'');
@@ -2087,11 +2122,104 @@ const DEFAULT_CFG={
   "csColor": "#000000",
   "csGap": 4,
   "unitPos": "after",
-  "fmtCS": {
-    "bold": false,
-    "italic": false,
-    "sup": false
-  },
+  "fmtCS": {"bold": false,"italic": false,"sup": false},
+  "showBarcode": true,
+  "barcodeVal": "7896991770144",
+  "barcodeH": 26,
+  "barcodeColor": "#000000",
+  "barcodeBg": "#ffffff",
+  "barcodeTxt": true,
+  "barcodeType": "auto",
+  "bcPos": "bottom",
+  "bcBarW": 1,
+  "bcMargin": 1,
+  "bcFsz": 7,
+  "bcAbove": "",
+  "bcBelow": "",
+  "bcSep": false,
+  "bcNumOnly": true,
+  "wMM": 47,
+  "hMM": 33,
+  "szD": 8,
+  "szP": 27,
+  "szU": 10,
+  "dLH": 1,
+  "dLS": 0,
+  "descBgC": "#ffff00",
+  "priceBgC": "#ffffff",
+  "priceBgR": 4,
+  "unitColor": "#000000",
+  "currency": "R$",
+  "fmtD": {"bold": false,"italic": false,"title": false,"upper": false,"shadow": false},
+  "fmtP": {"bold": true,"italic": false,"shadow": false,"outline": false},
+  "bw": 1,
+  "pd": 6,
+  "font": "Arial,sans-serif",
+  "vedOffsets": {},
+  "bg": "#ffffff",
+  "tx": "#111111",
+  "pr": "#000000",
+  "bd": "#cccccc",
+  "alnD": "center",
+  "alnP": "center"
+};
+
+const PRESETS={
+  "Etiqueta C/Barras": {...DEFAULT_CFG},
+  "C/Barras": {
+  "desc": "LEITE UHT INTEGRAL MACUCO CAIXA 1L",
+  "price": "8,99",
+  "unit": "kg",
+  "oldPrice": "12,99",
+  "oldPfx": "De:",
+  "oldStyle": "line",
+  "oldSz": null,
+  "showSav": false,
+  "showDesc": true,
+  "showUnit": false,
+  "showOld": false,
+  "showBadge": false,
+  "showStore": true,
+  "showLoc": false,
+  "showDescBg": false,
+  "showPriceBg": false,
+  "showSBorder": true,
+  "sBorderColor": "#bdbdbd",
+  "sBorderW": 0.5,
+  "badgeText": "OFERTA",
+  "badgeColor": "#dc2626",
+  "badgeTxColor": "#ffffff",
+  "badgeStyle": "corner",
+  "badgePos": "tr",
+  "badgeSz": "md",
+  "storeName": "Casa das Carnes",
+  "storeLoc": "",
+  "storeAln": "center",
+  "sBg": "#ffffff",
+  "sTx": "#000000",
+  "sLocColor": "#ffcccc",
+  "szStore": 10,
+  "szLoc": 8,
+  "storeH": 13,
+  "storePadH": 8,
+  "storePadV": 4,
+  "storeGapItems": 7,
+  "storeGapTexts": 2,
+  "storeGap": 0,
+  "storeLogoMax": 40,
+  "storeRadius": 0,
+  "logoB64": "",
+  "oldColor": "",
+  "bodyGap": 0,
+  "csSzRatio": 100,
+  "pLS": -1,
+  "csLS": -1,
+  "csPos": "before",
+  "csText": "R$",
+  "csColor": "#000000",
+  "csGap": 4,
+  "unitPos": "after",
+  "fmtCS": {"bold": false,"italic": false,"sup": false},
   "showBarcode": true,
   "barcodeVal": "7896991770144",
   "barcodeH": 26,
@@ -2119,19 +2247,8 @@ const DEFAULT_CFG={
   "priceBgR": 4,
   "unitColor": "#000000",
   "currency": "R$",
-  "fmtD": {
-    "bold": false,
-    "italic": false,
-    "title": false,
-    "upper": false,
-    "shadow": false
-  },
-  "fmtP": {
-    "bold": true,
-    "italic": false,
-    "shadow": false,
-    "outline": false
-  },
+  "fmtD": {"bold": false,"italic": false,"title": false,"upper": false,"shadow": false},
+  "fmtP": {"bold": true,"italic": false,"shadow": false,"outline": false},
   "bw": 1,
   "pd": 6,
   "font": "Arial,sans-serif",
@@ -2142,13 +2259,14 @@ const DEFAULT_CFG={
   "bd": "#cccccc",
   "alnD": "center",
   "alnP": "center"
-}
+  }
+};
 ;
 (function init(){
   cosmosLoad();
   gistLoadCfg();
   try{ applyConf(DEFAULT_CFG); }catch(e){}
-  reSum();updP();renderProjList();
+  reSum();updP();renderProjList();renderPresets();
   addTag();
   document.querySelectorAll('.tab').forEach((b,i)=>{b.onclick=function(){goTab(['quick','cfg','lista','exp'][i],this);};});
   // Auto-receber projetos do Gist ao abrir
