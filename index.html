@@ -16,6 +16,10 @@ body{font-family:Arial,sans-serif;font-size:13px;display:flex;flex-direction:col
 .app{display:flex;height:min(790px,100vh);width:min(1280px,100vw);border-radius:10px;overflow:hidden;border:1px solid var(--bd1);position:relative}
 .sb{width:316px;min-width:316px;background:var(--bg1);display:flex;flex-direction:column;overflow:hidden}
 .topbar{display:flex;background:#000;border-bottom:1px solid var(--bd1);flex-shrink:0;align-items:stretch}
+.light .topbar{background:var(--bg2)}
+.light .tab{color:var(--tx3)}
+.light .tab.on{color:var(--tx1);background:var(--bg1)}
+.light .thmbtn{color:var(--tx2);border-left-color:var(--bd1)}
 .tabs{display:flex;flex:1}
 .tab{flex:1;padding:9px 0;text-align:center;font-size:10px;font-weight:700;cursor:pointer;color:var(--tx4);border:none;background:none;text-transform:uppercase;border-bottom:2px solid transparent;letter-spacing:.04em}
 .tab.on{color:var(--tx1);background:var(--bg1);border-bottom-color:var(--ac)}
@@ -227,30 +231,18 @@ input[type=color]{width:32px;height:29px;padding:2px;border:1px solid var(--id);
 .gist-pin-set label{font-size:9px;font-weight:700;color:var(--tx4);text-transform:uppercase;letter-spacing:.07em}
 .gist-pin-set input{padding:6px 9px;font-size:13px;letter-spacing:.3em;border:1px solid var(--id);border-radius:6px;background:var(--ib);color:var(--tx1);font-family:monospace;outline:none;width:100%}
 .gist-pin-set input:focus{border-color:var(--ac)}
-/* ── Editor visual v3 ── */
-.ved-ov{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:9000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-.ved-box{background:var(--bg2);border:1px solid var(--bd2);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;max-width:96vw;max-height:96vh;overflow:hidden}
-.ved-hdr{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.ved-hdr-title{font-size:13px;font-weight:700;color:var(--tx1)}
-.ved-hdr-sub{font-size:10px;color:var(--tx3);margin-top:2px}
-.ved-stage{position:relative;background:#555;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden}
-.ved-container{position:relative;flex-shrink:0}
-.ved-footer{display:flex;gap:6px;align-items:center}
-.ved-coord{font-size:10px;color:var(--tx3);flex:1;font-family:monospace;min-width:140px}
-.ved-handle{position:absolute;z-index:20;transition:background .12s}
-.ved-handle-h{left:0;right:0;height:8px;cursor:ns-resize;background:rgba(77,144,254,.35);display:flex;align-items:center;justify-content:center}
-.ved-handle-h::after{content:'';width:32px;height:3px;background:rgba(77,144,254,.9);border-radius:2px}
-.ved-handle-h:hover,.ved-handle-h.ved-handle-active{background:rgba(77,144,254,.75)}
-.ved-handle-v{top:0;bottom:0;width:8px;cursor:ew-resize;background:rgba(77,144,254,.35);display:flex;align-items:center;justify-content:center}
-.ved-handle-v::after{content:'';height:32px;width:3px;background:rgba(77,144,254,.9);border-radius:2px}
-.ved-handle-v:hover,.ved-handle-v.ved-handle-active{background:rgba(77,144,254,.75)}
-.ved-tip{font-size:10px;color:var(--tx3);background:var(--cbg);border:1px solid var(--cbd);border-radius:6px;padding:6px 10px;line-height:1.6}
-.ved-tip b{color:var(--tx2)}.gist-inp{width:100%;padding:7px 9px;font-size:12px;font-family:monospace;border:1px solid var(--id);border-radius:6px;background:var(--ib);color:var(--tx1);outline:none}
+/* ── gist ── */
+.gist-inp{width:100%;padding:7px 9px;font-size:12px;font-family:monospace;border:1px solid var(--id);border-radius:6px;background:var(--ib);color:var(--tx1);outline:none}
 .gist-inp:focus{border-color:var(--ac)}
 .gist-status{font-size:10px;padding:5px 8px;border-radius:5px;margin-top:6px;display:none}
 .gist-ok{background:#0a1c0e;color:#4ade80;border:1px solid #16a34a}
 .gist-err{background:#1c0a0a;color:#f87171;border:1px solid #dc2626}
 .toast.err{border-left-color:#dc2626;background:#1c0a0a}
+/* grade de etiquetas */
+.grid-cell{position:absolute;box-sizing:border-box;border:1px dashed rgba(77,144,254,.5);pointer-events:none}
+.grid-cell-num{position:absolute;top:3px;left:4px;font-size:9px;font-weight:700;color:#fff;font-family:monospace;line-height:1;background:rgba(77,144,254,.75);padding:1px 4px;border-radius:3px}
+.grid-cell.filled{border-color:rgba(74,222,128,.5)}
+.pvbtn.on{background:var(--ac);color:#fff;border-color:var(--ac)}
 </style>
 
 <div class="app" id="app">
@@ -577,7 +569,7 @@ onkeydown="if(event.key==='Enter'){event.preventDefault();addTag();setTimeout(()
 <div class="pv">
 <div class="pvtop">
 <button class="pvbtn" id="btn-undo" onclick="undo()" disabled>↩ Desfazer</button>
-<button class="pvbtn" onclick="openVED()" title="Ajustar posição dos elementos dentro da etiqueta">✏️ Ajustar posição</button>
+<button class="pvbtn" id="btn-grid" onclick="toggleGrid()" title="Mostrar grade de etiquetas">⊞ Grade</button>
 <button class="pvbtn" onclick="selectAll()">☐ Selecionar todas</button>
 <button class="pvbtn" onclick="deselAll()">✕ Desselecionar</button>
 <span id="cnt" style="color:var(--tx3);font-size:10px">0 etiquetas</span>
@@ -585,7 +577,7 @@ onkeydown="if(event.key==='Enter'){event.preventDefault();addTag();setTimeout(()
 <div class="zctrl"><span style="font-size:9px;color:var(--tx4)">🔍</span><input type="range" id="zoom-sl" min="30" max="180" value="100" step="5" oninput="setZoom(this.value)"><span id="zoom-val" style="font-size:10px;color:var(--tx3);white-space:nowrap">100%</span></div>
 </div>
 <div id="swrap" style="position:relative;flex-shrink:0">
-<div class="a4" id="sheet"><div class="sg2" id="sgh2"></div><div class="sg2" id="sgv2"></div></div>
+<div class="a4" id="sheet"><div class="sg2" id="sgh2"></div><div class="sg2" id="sgv2"></div><div id="grid-overlay" style="position:absolute;inset:0;pointer-events:none;z-index:3;display:none"></div></div>
 </div>
 </div>
 </div>
@@ -616,6 +608,73 @@ let qOpts={old:false,badge:false,unit:true};
 let zoom=1.0,bcTimer=null,jsBCLoaded=false,bcProduct=null;
 let cosmosTokens=[],cosmosIdx=0;
 let priceTabMode=true,priceTabData=new Map();
+let gridOn=false;
+
+// Referência fixa da grade — sempre tags[0], salva snapshot ao ativar ou ao mover/redimensionar tag[0]
+let _gridRef=null;
+
+function _updateGridRef(){
+  if(!tags[0])return;
+  const t=tags[0];
+  // Calcula gap a partir da segunda etiqueta (horizontal e vertical)
+  const wpx=t.wMM*MM*SC, hpx=t.hMM*MM*SC;
+  let gapX=10, gapY=10; // padrão = margem de findPos
+  const same=tags.find(u=>u!==t&&Math.abs(u.y-t.y)<hpx*0.5);
+  if(same)gapX=Math.max(0,same.x-(t.x+wpx));
+  const below=tags.find(u=>u!==t&&Math.abs(u.x-t.x)<wpx*0.5&&u.y>t.y);
+  if(below)gapY=Math.max(0,below.y-(t.y+hpx));
+  _gridRef={wMM:t.wMM,hMM:t.hMM,x:t.x,y:t.y,gapX,gapY};
+}
+
+function toggleGrid(){
+  gridOn=!gridOn;
+  const btn=G('btn-grid');
+  if(btn)btn.classList.toggle('on',gridOn);
+  if(gridOn){_updateGridRef();renderGrid();}else clearGrid();
+}
+
+function renderGrid(){
+  const ov=G('grid-overlay');if(!ov)return;
+  ov.innerHTML='';ov.style.display='block';
+  // Usa sempre o snapshot de tags[0] como referência fixa
+  if(!_gridRef&&tags[0])_updateGridRef();
+  const ref=_gridRef;
+  if(!ref){
+    // Sem etiquetas: usa valores do formulário e gap padrão
+    const wMM=parseFloat(V('q-w'))||47;
+    const hMM=parseFloat(V('q-h'))||36;
+    const wpx=wMM*MM*SC, hpx=hMM*MM*SC;
+    const ox=10, oy=10, gapX=10, gapY=10;
+    _drawGrid(ov,wpx,hpx,ox,oy,gapX,gapY,wMM,hMM);
+    return;
+  }
+  const wpx=ref.wMM*MM*SC, hpx=ref.hMM*MM*SC;
+  _drawGrid(ov,wpx,hpx,ref.x,ref.y,ref.gapX,ref.gapY,ref.wMM,ref.hMM);
+}
+
+function _drawGrid(ov,wpx,hpx,ox,oy,gapX,gapY,wMM,hMM){
+  const stepX=wpx+gapX, stepY=hpx+gapY;
+  const cols=Math.floor((SW-ox+gapX)/stepX);
+  const rows=Math.floor((SH-oy+gapY)/stepY);
+  const total=cols*rows;
+  let n=0;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      n++;
+      const cell=document.createElement('div');
+      cell.className='grid-cell';
+      cell.style.cssText=`left:${Math.round(ox+c*stepX)}px;top:${Math.round(oy+r*stepY)}px;width:${Math.round(wpx)}px;height:${Math.round(hpx)}px`;
+      const num=document.createElement('span');
+      num.className='grid-cell-num';num.textContent=n;
+      cell.appendChild(num);
+      ov.appendChild(cell);
+    }
+  }
+  const lbl=document.createElement('div');
+  lbl.style.cssText='position:absolute;bottom:4px;right:6px;font-size:9px;font-weight:700;color:#fff;font-family:monospace;background:rgba(77,144,254,.75);padding:2px 6px;border-radius:3px';
+  lbl.textContent=`${cols}×${rows} = ${total} etiquetas (${Math.round(wMM)}×${Math.round(hMM)}mm · gap ${Math.round(PX2MM(gapX))}×${Math.round(PX2MM(gapY))}mm)`;
+  ov.appendChild(lbl);
+}
 
 function st(msg,type='info'){const el=document.createElement('div');el.className='toast'+(type==='ok'?' ok':type==='err'?' err':'');el.textContent=msg;G('toastwrap').appendChild(el);setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),400);},2400);}
 function toggleTheme(){isLight=!isLight;document.querySelector('.app').classList.toggle('light',isLight);G('theme-btn').textContent=isLight?'🌑':'🌙';}
@@ -911,6 +970,9 @@ function parsePriceTab(text){
   return map;
 }
 
+// ── PRICETAB ──────────────────────────────────────────
+let _lastPriceTabFile=null;
+
 function loadPriceTab(input){
   const file=input.files[0];if(!file)return;
   _lastPriceTabFile=file;
@@ -918,12 +980,13 @@ function loadPriceTab(input){
   const btn=G('bc-refresh-btn');if(btn){btn.style.opacity='1';btn.style.pointerEvents='';}
   _readPriceTabFile(file);
 }
-let _lastPriceTabFile=null;
+
 function reloadPriceTab(){
   if(!_lastPriceTabFile){st('Nenhum arquivo carregado','err');return;}
   st('Recarregando…');
   _readPriceTabFile(_lastPriceTabFile);
 }
+
 function _readPriceTabFile(file){
   const statusEl=G('bc-local-status');
   if(statusEl){statusEl.textContent='Carregando…';statusEl.style.color='var(--tx3)';}
@@ -942,9 +1005,12 @@ function _readPriceTabFile(file){
   };
   reader.onerror=function(){
     if(statusEl){statusEl.textContent='⚠ Erro ao ler o arquivo';statusEl.style.color='#f87171';}
+    st('Erro ao ler o arquivo','err');
   };
   reader.readAsText(file,'windows-1252');
 }
+
+function ptAutoReload(){/* sem File System Access API — não é suportado via input */}
 
 function doLocalFetch(code){
   if(!code)return;
@@ -1058,7 +1124,7 @@ function selectAll(){selSet.clear();tags.forEach(t=>selSet.add(t.id));upSelVis()
 function deselAll(){selSet.clear();sel=null;upSelVis();}
 function upSelVis(){document.querySelectorAll('.te').forEach(el=>{const id=parseInt(el.id.replace('te',''));el.classList.toggle('sel',sel===id);el.classList.toggle('msel',selSet.has(id)&&sel!==id);});upCount();}
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='z'&&e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA'){e.preventDefault();undo();}if((e.ctrlKey||e.metaKey)&&e.key==='a'&&e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA'){e.preventDefault();selectAll();}if(e.key==='Escape')deselAll();});
-function findPos(wp,hp){const m=5;if(!tags.length)return{x:m,y:m};const last=tags[tags.length-1];const lw=last.wMM*MM*SC;const nx=last.x+lw+m;if(nx+wp<=SW-m)return{x:nx,y:last.y};const ry=last.y,tol=hp*0.6;const rt=tags.filter(t=>Math.abs(t.y-ry)<=tol);return{x:Math.min(...rt.map(t=>t.x)),y:Math.max(...rt.map(t=>t.y+t.hMM*MM*SC))+m};}
+function findPos(wp,hp){const m=10;if(!tags.length)return{x:m,y:m};const last=tags[tags.length-1];const lw=last.wMM*MM*SC;const nx=last.x+lw+m;if(nx+wp<=SW-m)return{x:nx,y:last.y};const ry=last.y,tol=hp*0.6;const rt=tags.filter(t=>Math.abs(t.y-ry)<=tol);return{x:Math.min(...rt.map(t=>t.x)),y:Math.max(...rt.map(t=>t.y+t.hMM*MM*SC))+m};}
 function tqopt(k){qOpts[k]=!qOpts[k];G('qopt-'+k)?.classList.toggle('on',qOpts[k]);if(k==='old'){G('q-old-wrap').style.display=qOpts[k]?'block':'none';G('tog-old').checked=qOpts[k];togsec('body-old',{checked:qOpts[k]});reSum();}if(k==='badge'){G('q-badge-wrap').style.display=qOpts[k]?'block':'none';G('tog-badge').checked=qOpts[k];togsec('body-badge',{checked:qOpts[k]});reSum();}if(k==='unit'){G('tog-unit').checked=qOpts[k];togsec('body-unit',{checked:qOpts[k]});}updP();renderQPrev();liveUp();}
 function syncQD(){G('f-desc').value=G('q-desc').value;reSum();}
 function syncQP(){G('f-price').value=G('q-price').value;reSum();}
@@ -1221,7 +1287,7 @@ function getCfg(){
   };
 }
 function autoSave(){try{localStorage.setItem('etiq_v25_auto',JSON.stringify(getCfg()));}catch(e){}}
-function liveUp(){if(sel===null)return;const t=tags.find(t=>t.id===sel);if(!t)return;Object.assign(t,getCfg());applyStyle(t);autoSave();}
+function liveUp(){if(sel===null)return;const t=tags.find(t=>t.id===sel);if(!t)return;Object.assign(t,getCfg());applyStyle(t);autoSave();if(gridOn&&t===tags[0]){_updateGridRef();renderGrid();}}
 
 function getSnap(id,x,y,wp,hp){const xC=[0,SW-wp,SW/2-wp/2],yC=[0,SH-hp,SH/2-hp/2];tags.forEach(t=>{if(t.id===id)return;const tw=t.wMM*MM*SC,th=t.hMM*MM*SC;xC.push(t.x,t.x+tw,t.x-wp,t.x+tw-wp);yC.push(t.y,t.y+th,t.y-hp,t.y+th-hp);});let bx=x,by=y,dx=SNAP+1,dy=SNAP+1;xC.forEach(cx=>{const d=Math.abs(x-cx);if(d<dx){dx=d;bx=cx;}});yC.forEach(cy=>{const d=Math.abs(y-cy);if(d<dy){dy=d;by=cy;}});return{x:dx<=SNAP?bx:x,y:dy<=SNAP?by:y,gx:dx<=SNAP?bx:null,gy:dy<=SNAP?by:null};}
 function showGuides(gx,gy){const sv=G('sgv2'),sh2=G('sgh2');if(gx!==null){sv.style.left=gx+'px';sv.classList.add('on');}else sv.classList.remove('on');if(gy!==null){sh2.style.top=gy+'px';sh2.classList.add('on');}else sh2.classList.remove('on');}
@@ -1234,240 +1300,7 @@ function addTag(){saveUndo();const c=getCfg(),wp=c.wMM*MM*SC,hp=c.hMM*MM*SC,pos=
 
 
 // ══════════════════════════════════════════════════════
-// EDITOR VISUAL v3 — arrastar divisórias, edição real
-// ══════════════════════════════════════════════════════
-let _vedTag = null;
-
-function openVED() {
-  const tag = tags.find(t => t.id === sel) || tags[tags.length - 1];
-  if (!tag) { st('Adicione uma etiqueta primeiro'); return; }
-  _vedTag = tag;
-  _buildVED();
-}
-
-function _buildVED() {
-  document.getElementById('ved-ov')?.remove();
-  const tag = _vedTag;
-  const wpx = tag.wMM * MM * SC;
-  const hpx = tag.hMM * MM * SC;
-  const maxW = Math.min(340, window.innerWidth * 0.7);
-  const maxH = Math.min(300, window.innerHeight * 0.55);
-  const sc = Math.min(maxW / wpx, maxH / hpx, 2);
-  const pw = Math.round(wpx * sc);
-  const ph = Math.round(hpx * sc);
-
-  const ov = document.createElement('div');
-  ov.className = 'ved-ov'; ov.id = 'ved-ov';
-  ov.addEventListener('click', e => { if (e.target === ov) closeVED(); });
-
-  const box = document.createElement('div');
-  box.className = 'ved-box';
-
-  // header
-  box.innerHTML = `<div class="ved-hdr">
-    <div><div class="ved-hdr-title">✏️ Ajustar layout da etiqueta</div>
-    <div class="ved-hdr-sub">Arraste as alças azuis para redimensionar cada área</div></div>
-    <button onclick="closeVED()" style="background:none;border:none;color:var(--tx3);cursor:pointer;font-size:20px;line-height:1;padding:0 4px">✕</button>
-  </div>`;
-
-  // tip
-  const tip = document.createElement('div');
-  tip.className = 'ved-tip';
-  tip.id = 'ved-coord';
-  tip.innerHTML = '💡 Arraste as <b>faixas azuis</b> para ajustar alturas · Borda direita e inferior para redimensionar a etiqueta';
-  box.appendChild(tip);
-
-  // stage
-  const stage = document.createElement('div');
-  stage.className = 'ved-stage';
-
-  const cont = document.createElement('div');
-  cont.className = 'ved-container';
-  cont.id = 'ved-cont';
-  cont.style.cssText = `width:${pw}px;height:${ph}px;`;
-
-  // background: real tag rendered via CSS scale
-  const bg = document.createElement('div');
-  bg.id = 'ved-bg';
-  bg.style.cssText = `position:absolute;top:0;left:0;transform:scale(${sc.toFixed(5)});transform-origin:top left;pointer-events:none;`;
-  bg.innerHTML = buildOneTagHtml(tag);
-  cont.appendChild(bg);
-
-  stage.appendChild(cont);
-  box.appendChild(stage);
-
-  // footer
-  const foot = document.createElement('div');
-  foot.className = 'ved-footer';
-  foot.innerHTML = `<button class="btn" style="margin:0;padding:7px 14px;font-size:11px" onclick="_vedReset()">↺ Reset</button>
-    <button class="btn btng" style="margin:0;flex:1;padding:8px;font-size:12px;font-weight:700" onclick="_vedApply()">✓ Aplicar ao preview</button>`;
-  box.appendChild(foot);
-
-  ov.appendChild(box);
-  document.body.appendChild(ov);
-
-  // build drag handles
-  _vedBuildHandles(cont, tag, sc, pw, ph);
-}
-
-function _vedRefreshBg(tag, sc) {
-  const bg = document.getElementById('ved-bg');
-  if (!bg) return;
-  // recalc scale from container
-  const cont = document.getElementById('ved-cont');
-  if (cont) {
-    const wpx = tag.wMM * MM * SC, hpx = tag.hMM * MM * SC;
-    const pw = cont.offsetWidth, ph = cont.offsetHeight;
-    // keep container fixed, update scale to fit
-    const newSc = Math.min(pw / wpx, ph / hpx);
-    bg.style.transform = `scale(${newSc.toFixed(5)})`;
-  }
-  bg.innerHTML = buildOneTagHtml(tag);
-}
-
-function _vedBuildHandles(cont, tag, sc, pw, ph) {
-  // remove old handles
-  cont.querySelectorAll('.ved-handle').forEach(h => h.remove());
-
-  const wpx = tag.wMM * MM * SC;
-  const hpx = tag.hMM * MM * SC;
-  const stH = tag.showStore ? (tag.storeH || 28) : 0;
-  const bcH = (tag.showBarcode && tag.barcodeVal) ? (tag.barcodeH || 26) : 0;
-  const bcTop = tag.bcPos === 'top';
-
-  // helper: horizontal divider handle
-  function addHHandle(yPx, label, onDrag) {
-    const h = document.createElement('div');
-    h.className = 'ved-handle ved-handle-h';
-    h.title = label;
-    h.style.cssText = `top:${Math.round(yPx * sc) - 4}px;`;
-    _vedDragHandle(h, cont, tag, sc, label, onDrag, true);
-    cont.appendChild(h);
-  }
-  // helper: vertical (right edge) handle
-  function addVHandle(xPx, label, onDrag) {
-    const h = document.createElement('div');
-    h.className = 'ved-handle ved-handle-v';
-    h.title = label;
-    h.style.cssText = `left:${Math.round(xPx * sc) - 4}px;`;
-    _vedDragHandle(h, cont, tag, sc, label, onDrag, false);
-    cont.appendChild(h);
-  }
-
-  // Store header bottom edge
-  if (tag.showStore && (tag.storeName || tag.logoB64) && stH > 0) {
-    addHHandle(stH, '↕ Altura do cabeçalho', (dy) => {
-      tag.storeH = Math.max(10, Math.round(stH + dy / sc / SC));
-      const el = G('s-shh'); if (el) { el.value = tag.storeH; G('v-shh') && (G('v-shh').textContent = tag.storeH + 'px'); }
-      return `Cabeçalho: ${tag.storeH}px`;
-    });
-  }
-
-  // Barcode top/bottom edge
-  if (tag.showBarcode && tag.barcodeVal && bcH > 0) {
-    const bcY = bcTop ? stH + bcH : hpx - bcH;
-    addHHandle(bcY, '↕ Altura do código de barras', (dy) => {
-      const sign = bcTop ? 1 : -1;
-      tag.barcodeH = Math.max(10, Math.round(bcH + sign * dy / sc / SC));
-      return `Código de barras: ${tag.barcodeH}px`;
-    });
-  }
-
-  // Right edge — resize width
-  addVHandle(wpx, '↔ Largura da etiqueta (mm)', (dy, dx) => {
-    tag.wMM = Math.max(20, parseFloat((tag.wMM + dx / sc / SC / MM).toFixed(1)));
-    G('f-w') && (G('f-w').value = Math.round(tag.wMM));
-    G('q-w') && (G('q-w').value = Math.round(tag.wMM));
-    // resize container
-    const cont2 = document.getElementById('ved-cont');
-    if (cont2) { const nw = Math.round(tag.wMM * MM * SC * sc); cont2.style.width = nw + 'px'; }
-    return `Largura: ${Math.round(tag.wMM)}mm`;
-  });
-
-  // Bottom edge — resize height
-  const hBot = document.createElement('div');
-  hBot.className = 'ved-handle ved-handle-h';
-  hBot.title = '↕ Altura da etiqueta (mm)';
-  hBot.style.cssText = `bottom:-4px;left:0;right:0;`;
-  _vedDragHandle(hBot, cont, tag, sc, '↕ Altura da etiqueta', (dy) => {
-    tag.hMM = Math.max(15, parseFloat((tag.hMM + dy / sc / SC / MM).toFixed(1)));
-    G('f-h') && (G('f-h').value = Math.round(tag.hMM));
-    G('q-h') && (G('q-h').value = Math.round(tag.hMM));
-    const cont2 = document.getElementById('ved-cont');
-    if (cont2) { const nh = Math.round(tag.hMM * MM * SC * sc); cont2.style.height = nh + 'px'; }
-    return `Altura: ${Math.round(tag.hMM)}mm`;
-  }, true);
-  cont.appendChild(hBot);
-}
-
-function _vedDragHandle(handle, cont, tag, sc, label, onDrag, isH) {
-  let startY, startX, startSnap;
-  handle.addEventListener('mousedown', e => {
-    e.preventDefault(); e.stopPropagation();
-    startY = e.clientY; startX = e.clientX;
-    // snapshot the relevant value
-    startSnap = {
-      storeH: tag.storeH, barcodeH: tag.barcodeH,
-      wMM: tag.wMM, hMM: tag.hMM
-    };
-    handle.classList.add('ved-handle-active');
-
-    function move(ev) {
-      const dy = ev.clientY - startY;
-      const dx = ev.clientX - startX;
-      // restore snapshot before applying delta
-      tag.storeH = startSnap.storeH; tag.barcodeH = startSnap.barcodeH;
-      tag.wMM = startSnap.wMM; tag.hMM = startSnap.hMM;
-      const lbl = onDrag(dy, dx) || label;
-      const tipEl = document.getElementById('ved-coord');
-      if (tipEl) tipEl.innerHTML = `<b>${lbl}</b>`;
-      // live update: real preview + VED background
-      applyStyle(tag);
-      _vedRefreshBg(tag, sc);
-      reSum(); updP();
-    }
-    function up() {
-      handle.classList.remove('ved-handle-active');
-      // rebuild handles for new dimensions
-      const cont2 = document.getElementById('ved-cont');
-      if (cont2) {
-        const wpx = tag.wMM * MM * SC, hpx = tag.hMM * MM * SC;
-        const pw = cont2.offsetWidth, ph = cont2.offsetHeight;
-        const sc2 = Math.min(pw / wpx, ph / hpx);
-        _vedBuildHandles(cont2, tag, sc2, pw, ph);
-      }
-      document.removeEventListener('mousemove', move);
-      document.removeEventListener('mouseup', up);
-    }
-    document.addEventListener('mousemove', move);
-    document.addEventListener('mouseup', up);
-  });
-}
-
-function _vedApply() {
-  if (!_vedTag) return;
-  applyStyle(_vedTag);
-  reSum(); updP();
-  closeVED();
-  st('Layout aplicado!', 'ok');
-}
-function _vedReset() {
-  if (!_vedTag) return;
-  // reload from DEFAULT_CFG dimensions
-  _vedTag.storeH = DEFAULT_CFG.storeH || 13;
-  _vedTag.barcodeH = DEFAULT_CFG.barcodeH || 26;
-  _vedTag.wMM = DEFAULT_CFG.wMM || 47;
-  _vedTag.hMM = DEFAULT_CFG.hMM || 36;
-  applyStyle(_vedTag);
-  reSum(); updP();
-  _buildVED();
-  st('Resetado para padrão');
-}
-function closeVED() { document.getElementById('ved-ov')?.remove(); }
-// ══════════════════════════════════════════════════════
-// FIM EDITOR VISUAL v3
-// ══════════════════════════════════════════════════════
-
+// GITHUB GIST SYNC + PIN PROTECTION
 // ══════════════════════════════════════════════════════
 // GITHUB GIST SYNC + PIN PROTECTION
 // ══════════════════════════════════════════════════════
@@ -1909,9 +1742,9 @@ document.addEventListener('mousemove',e=>{
     const dx=mx-drag.mx0,dy=my-drag.my0;
     drag.snap.forEach(({id,x0,y0})=>{const t=tags.find(t=>t.id===id);if(!t)return;const el2=document.getElementById('te'+id);if(!el2)return;const wp=t.wMM*MM*SC,hp=t.hMM*MM*SC;let nx=Math.max(0,Math.min(x0+dx,SW-wp)),ny=Math.max(0,Math.min(y0+dy,SH-hp));if(id===drag.id){const sn=getSnap(id,nx,ny,wp,hp);t.x=sn.x;t.y=sn.y;showGuides(sn.gx,sn.gy);}else{t.x=nx;t.y=ny;}el2.style.left=t.x+'px';el2.style.top=t.y+'px';});return;
   }
-  if(rsz){const tag=tags.find(t=>t.id===rsz.id);if(!tag)return;const rect=sheet.getBoundingClientRect(),mx=(e.clientX-rect.left)/zoom,my=(e.clientY-rect.top)/zoom;const ddx=(mx-rsz.mx0)/MM,ddy=(my-rsz.my0)/MM,d=rsz.dir;let nw=rsz.w0,nh=rsz.h0,nx=rsz.x0,ny=rsz.y0;if(d.includes('e'))nw=Math.max(20,rsz.w0+ddx);if(d.includes('s'))nh=Math.max(15,rsz.h0+ddy);if(d.includes('w')){nw=Math.max(20,rsz.w0-ddx);nx=rsz.x0+(rsz.w0-nw)*MM*SC;}if(d.includes('n')){nh=Math.max(15,rsz.h0-ddy);ny=rsz.y0+(rsz.h0-nh)*MM*SC;}tag.wMM=nw;tag.hMM=nh;tag.x=nx;tag.y=ny;const fw=G('f-w'),fh=G('f-h');if(fw){fw.value=Math.round(nw);G('q-w').value=Math.round(nw);}if(fh){fh.value=Math.round(nh);G('q-h').value=Math.round(nh);}G('sum-size').textContent=Math.round(nw)+' × '+Math.round(nh)+' mm';updPrevSize();applyStyle(tag);}
+  if(rsz){const tag=tags.find(t=>t.id===rsz.id);if(!tag)return;const rect=sheet.getBoundingClientRect(),mx=(e.clientX-rect.left)/zoom,my=(e.clientY-rect.top)/zoom;const ddx=(mx-rsz.mx0)/MM,ddy=(my-rsz.my0)/MM,d=rsz.dir;let nw=rsz.w0,nh=rsz.h0,nx=rsz.x0,ny=rsz.y0;if(d.includes('e'))nw=Math.max(20,rsz.w0+ddx);if(d.includes('s'))nh=Math.max(15,rsz.h0+ddy);if(d.includes('w')){nw=Math.max(20,rsz.w0-ddx);nx=rsz.x0+(rsz.w0-nw)*MM*SC;}if(d.includes('n')){nh=Math.max(15,rsz.h0-ddy);ny=rsz.y0+(rsz.h0-nh)*MM*SC;}tag.wMM=nw;tag.hMM=nh;tag.x=nx;tag.y=ny;const fw=G('f-w'),fh=G('f-h');if(fw){fw.value=Math.round(nw);G('q-w').value=Math.round(nw);}if(fh){fh.value=Math.round(nh);G('q-h').value=Math.round(nh);}G('sum-size').textContent=Math.round(nw)+' × '+Math.round(nh)+' mm';updPrevSize();applyStyle(tag);if(gridOn&&tag===tags[0]){_updateGridRef();renderGrid();}}
 });
-document.addEventListener('mouseup',()=>{drag=null;rsz=null;hideGuides();});
+document.addEventListener('mouseup',()=>{const wasRsz=rsz;drag=null;rsz=null;hideGuides();if(gridOn){if(wasRsz&&tags.find(t=>t.id===wasRsz.id)===tags[0]){_updateGridRef();}renderGrid();}});
 sheet.addEventListener('click',e=>{if(e.target===sheet){sel=null;selSet.clear();upSelVis();}});
 
 function applyTpl(i){saveUndo();const tpl=TPLS[i];set2('c-bg','c-bg-t',tpl.bg);set2('c-tx','c-tx-t',tpl.tx);set2('c-pr','c-pr-t',tpl.pr);set2('c-bd','c-bd-t',tpl.bd);set2('c-sbg','c-sbg-t',tpl.sBg);set2('c-stx','c-stx-t',tpl.sTx);['s-bw','s-pd','f-font','s-d','s-p','s-u','s-store'].forEach((id,j)=>{const el=G(id);if(el)el.value=[tpl.bw,tpl.pd,tpl.font,tpl.szD,tpl.szP,tpl.szU,tpl.szS][j];});[['v-bw',tpl.bw+'px'],['v-pd',tpl.pd+'px'],['v-d',tpl.szD+'pt'],['v-p',tpl.szP+'pt'],['v-u',tpl.szU+'pt'],['v-st',tpl.szS+'pt']].forEach(([id,v])=>{const el=G(id);if(el)el.textContent=v;});reSum();updP();liveUp();st('Template "'+tpl.n+'" aplicado','ok');}
@@ -2259,6 +2092,100 @@ const PRESETS={
   "bd": "#cccccc",
   "alnD": "center",
   "alnP": "center"
+  },
+  "Hortifrúti": {
+  "desc": "TOMATE K",
+  "price": "10,99",
+  "unit": "kg",
+  "oldPrice": "12,99",
+  "oldPfx": "De:",
+  "oldStyle": "line",
+  "oldSz": null,
+  "showSav": false,
+  "showDesc": true,
+  "showUnit": true,
+  "showOld": false,
+  "showBadge": false,
+  "showStore": true,
+  "showLoc": false,
+  "showDescBg": false,
+  "showPriceBg": false,
+  "showSBorder": true,
+  "sBorderColor": "#bdbdbd",
+  "sBorderW": 0.5,
+  "badgeText": "OFERTA",
+  "badgeColor": "#dc2626",
+  "badgeTxColor": "#ffffff",
+  "badgeStyle": "corner",
+  "badgePos": "tr",
+  "badgeSz": "md",
+  "storeName": "Casa das Carnes",
+  "storeLoc": "",
+  "storeAln": "center",
+  "sBg": "#ffffff",
+  "sTx": "#000000",
+  "sLocColor": "#ffcccc",
+  "szStore": 12,
+  "szLoc": 8,
+  "storeH": 13,
+  "storePadH": 8,
+  "storePadV": 4,
+  "storeGapItems": 7,
+  "storeGapTexts": 2,
+  "storeGap": 0,
+  "storeLogoMax": 40,
+  "storeRadius": 0,
+  "logoB64": "",
+  "oldColor": "",
+  "bodyGap": 0,
+  "csSzRatio": 100,
+  "pLS": -2,
+  "csLS": -2,
+  "csPos": "before",
+  "csText": "R$",
+  "csColor": "#000000",
+  "csGap": 4,
+  "unitPos": "after",
+  "fmtCS": {"bold": false,"italic": false,"sup": false},
+  "showBarcode": true,
+  "barcodeVal": "0001",
+  "barcodeH": 18,
+  "barcodeColor": "#000000",
+  "barcodeBg": "#ffffff",
+  "barcodeTxt": true,
+  "barcodeType": "auto",
+  "bcPos": "bottom",
+  "bcBarW": 1,
+  "bcMargin": 1,
+  "bcFsz": 7,
+  "bcAbove": "",
+  "bcBelow": "",
+  "bcSep": false,
+  "bcNumOnly": true,
+  "wMM": 63,
+  "hMM": 39,
+  "szD": 17,
+  "szP": 37,
+  "szU": 10,
+  "dLH": 1,
+  "dLS": 0,
+  "descBgC": "#ffff00",
+  "priceBgC": "#ffffff",
+  "priceBgR": 4,
+  "unitColor": "#000000",
+  "currency": "R$",
+  "fmtD": {"bold": false,"italic": false,"title": false,"upper": false,"shadow": false},
+  "fmtP": {"bold": true,"italic": false,"shadow": false,"outline": false},
+  "bw": 1,
+  "pd": 6,
+  "font": "Arial,sans-serif",
+  "vedOffsets": {},
+  "bg": "#ffffff",
+  "tx": "#111111",
+  "pr": "#000000",
+  "bd": "#cccccc",
+  "alnD": "center",
+  "alnP": "center"
   }
 };
 ;
@@ -2271,6 +2198,7 @@ const PRESETS={
   document.querySelectorAll('.tab').forEach((b,i)=>{b.onclick=function(){goTab(['quick','cfg','lista','exp'][i],this);};});
   // Auto-receber projetos do Gist ao abrir
   setTimeout(gistPullSilent, 1500);
+  setTimeout(ptAutoReload, 800);
   // Garantir onchange em todos os color inputs (reforço para alguns navegadores)
   document.querySelectorAll('input[type=color]').forEach(inp=>{
     if(!inp.dataset.ocPatched){
