@@ -351,6 +351,7 @@ onkeydown="if(event.key==='Enter'){event.preventDefault();addTag();setTimeout(()
 <div class="cfgp">
 <button class="cfgbk" onclick="goTab('quick',E('.tab:nth-child(1)'))">← Voltar ao modo rápido</button>
 
+<!-- PREVIEW -->
 <div class="qpc" style="margin-bottom:4px">
 <div class="qph"><span>Pré-visualização</span><span id="q-dim" style="color:var(--tx3);font-size:9px">90×55mm</span></div>
 <div class="qpb"><div id="q-prev"></div></div>
@@ -358,109 +359,103 @@ onkeydown="if(event.key==='Enter'){event.preventDefault();addTag();setTimeout(()
 
 <!-- PRESETS -->
 <div class="card" id="c-presets"><div class="cah" onclick="tcard('c-presets')"><span class="cai">🎨</span><div class="cam"><div class="cat">Presets</div><div class="cas">Templates e configurações prontas</div></div><div class="car"><span class="caa">▾</span></div></div>
-<div class="cab">
-<div class="tg" id="tpl-grid"></div>
-</div></div>
+<div class="cab"><div class="tg" id="tpl-grid"></div></div></div>
 
-<!-- SAVE -->
-<div class="card" id="c-save"><div class="cah" onclick="tcard('c-save')"><span class="cai">💾</span><div class="cam"><div class="cat">Configurações salvas</div><div class="cas">Auto-salva ao modificar</div></div><div class="car"><span class="caa">▾</span></div></div>
-<div class="cab"><div class="r2"><button class="btn btnb" onclick="saveConf()">💾 Salvar agora</button><button class="btn" onclick="loadConf()">📂 Carregar</button></div><div class="r2"><button class="btn" onclick="exportConfJSON()">⬇ Exportar .json</button><button class="btn" style="position:relative;overflow:hidden">📁 Importar .json<input type="file" accept=".json" onchange="importConfJSON(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></button></div></div></div>
+<!-- TAMANHO -->
+<div class="card" id="c-size"><div class="cah" onclick="tcard('c-size')"><span class="cai">📐</span><div class="cam"><div class="cat">Tamanho da etiqueta</div><div class="cas" id="sum-size">90 × 55 mm</div></div><div class="car"><span class="caa">▾</span></div></div>
+<div class="cab"><div style="padding:8px;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px"><div id="prev-size-box" style="border:2px solid #4d90fe;border-radius:2px;background:#e8f0fe;transition:all .2s"></div><span id="prev-size-lbl" style="font-size:11px;color:var(--tx3)">90 × 55 mm</span></div><div class="r2"><div class="fld"><label class="lbl">Largura (mm)</label><input type="number" id="f-w" value="47" min="20" max="210" oninput="syncWQ();reSum();updP();liveUp()"></div><div class="fld"><label class="lbl">Altura (mm)</label><input type="number" id="f-h" value="36" min="15" max="297" oninput="syncHQ();reSum();updP();liveUp()"></div></div></div></div>
 
-<!-- BARCODE CONFIG CARD (novo, completo) -->
-<div class="card" id="c-barcode"><div class="cah" onclick="tcard('c-barcode')"><span class="cai">📊</span><div class="cam"><div class="cat">Código de barras na etiqueta</div><div class="cas" id="sum-bc">Desativado</div></div><div class="car"><label class="tog" onclick="event.stopPropagation()"><input type="checkbox" id="tog-bc-cfg" onchange="onBCCfgTog(this.checked)"><span class="ts"></span></label><span class="caa">▾</span></div></div>
-<div class="cab"><div id="body-bc" style="opacity:.3;pointer-events:none">
-<div class="spv"><div id="bc-prev-cfg" style="min-height:50px;background:#fff;display:flex;align-items:center;justify-content:center;padding:6px"><span style="font-size:10px;color:#aaa">Digite o código abaixo para visualizar</span></div></div>
-<div class="fld"><label class="lbl">Código EAN / barcode</label><input type="text" id="bc-val-cfg" placeholder="7891234567890" maxlength="20" style="font-family:monospace;font-size:14px;letter-spacing:.06em" oninput="syncBCVals();renderBCPrevCfg();liveUp()"></div>
-<div class="r2"><div class="fld"><label class="lbl">Tipo de código</label><select id="bc-type" onchange="renderBCPrevCfg();liveUp()"><option value="auto">AUTO (detecta)</option><option value="EAN13">EAN-13</option><option value="EAN8">EAN-8</option><option value="CODE128">CODE 128</option><option value="CODE39">CODE 39</option><option value="UPC">UPC-A</option></select></div>
-<div class="fld"><label class="lbl">Posição na etiqueta</label><select id="bc-pos" onchange="liveUp()"><option value="bottom">Parte inferior</option><option value="top">Parte superior</option></select></div></div>
-<div class="r2">
-<div><div class="slr">Altura <span class="slv" id="v-bc-h">28px</span></div><input type="range" id="s-bc-h" min="16" max="60" value="28" step="2" oninput="sl('v-bc-h',this.value,'px');renderBCPrevCfg();liveUp()"></div>
-<div><div class="slr">Largura barras <span class="slv" id="v-bc-w">1.2</span></div><input type="range" id="s-bc-w" min="10" max="30" value="12" step="1" oninput="sl('v-bc-w',(this.value/10).toFixed(1),'');renderBCPrevCfg();liveUp()"></div>
-</div>
-<div class="slr">Margem interna <span class="slv" id="v-bc-m">2px</span></div><input type="range" id="s-bc-m" min="0" max="12" value="2" step="1" oninput="sl('v-bc-m',this.value,'px');renderBCPrevCfg();liveUp()">
-<div class="r2"><div class="fld"><label class="lbl">Cor barras</label><div class="cr2"><input type="color" id="bc-color-cfg" value="#000000" oninput="syncBCColors();renderBCPrevCfg();liveUp()"></div></div><div class="fld"><label class="lbl">Cor fundo</label><div class="cr2"><input type="color" id="bc-bg-cfg" value="#ffffff" oninput="syncBCColors();renderBCPrevCfg();liveUp()"></div></div></div>
-<div class="r2" style="margin-bottom:8px">
-<div class="tr2"><span class="lbl">Mostrar número</span><label class="tog"><input type="checkbox" id="tog-bc-txt-cfg" checked onchange="syncBCTxt();renderBCPrevCfg();liveUp()"><span class="ts"></span></label></div>
-<div><div class="slr">Tam. fonte num. <span class="slv" id="v-bc-fsz">8px</span></div><input type="range" id="s-bc-fsz" min="6" max="14" value="8" step="1" oninput="sl('v-bc-fsz',this.value,'px');renderBCPrevCfg();liveUp()"></div>
-</div>
-<div class="slr">Posição número ↕ <span class="slv" id="v-bc-tm">1</span></div><input type="range" id="s-bc-tm" min="-10" max="20" value="1" step="1" oninput="sl('v-bc-tm',this.value,'');renderBCPrevCfg();liveUp()">
-<div class="tr2" style="margin-bottom:8px"><span class="lbl">Apenas número (sem barras)</span><label class="tog"><input type="checkbox" id="tog-bc-numonly" onchange="liveUp()"><span class="ts"></span></label></div>
-<div class="fld"><label class="lbl">Texto acima (opcional)</label><input type="text" id="bc-above" placeholder="Ex: Escaneie aqui" maxlength="40" oninput="liveUp()"></div>
-<div class="fld"><label class="lbl">Texto abaixo (opcional)</label><input type="text" id="bc-below" placeholder="Ex: www.loja.com.br" maxlength="40" oninput="liveUp()"></div>
-<div class="tr2"><span class="lbl">Linha separadora acima</span><label class="tog"><input type="checkbox" id="tog-bc-sep" onchange="liveUp()"><span class="ts"></span></label></div>
-</div></div></div>
-
-<!-- STORE — completo -->
-<div class="card" id="c-store"><div class="cah" onclick="tcard('c-store')"><span class="cai">🏪</span><div class="cam"><div class="cat">Cabeçalho do mercado</div><div class="cas" id="sum-store">Desativado</div></div><div class="car"><label class="tog" onclick="event.stopPropagation()"><input type="checkbox" id="tog-store" onchange="ontog('body-store',this,'sum-store')"><span class="ts"></span></label><span class="caa">▾</span></div></div>
+<!-- CABEÇALHO DA LOJA -->
+<div class="card" id="c-store"><div class="cah" onclick="tcard('c-store')"><span class="cai">🏪</span><div class="cam"><div class="cat">Cabeçalho da loja</div><div class="cas" id="sum-store">Desativado</div></div><div class="car"><label class="tog" onclick="event.stopPropagation()"><input type="checkbox" id="tog-store" onchange="ontog('body-store',this,'sum-store')"><span class="ts"></span></label><span class="caa">▾</span></div></div>
 <div class="cab"><div id="body-store" style="opacity:.3;pointer-events:none">
 <div class="spv"><div id="prev-store" style="height:28px;background:#cc0000;display:flex;align-items:center;justify-content:center;padding:4px 8px"><span style="font-size:11px;color:#fff;font-weight:700;font-family:Arial">Super Econômico</span></div></div>
-<div class="fld"><label class="lbl">Nome</label><input type="text" id="f-sname" placeholder="Ex: Super Econômico" oninput="reSum();updP();liveUp()"></div>
-<div class="fld"><div class="tr2"><span class="lbl">Localização</span><label class="tog"><input type="checkbox" id="tog-sloc" onchange="togsec('body-sloc',this);updP();liveUp()"><span class="ts"></span></label></div><div id="body-sloc" style="opacity:.3;pointer-events:none"><input type="text" id="f-sloc" placeholder="Rua das Flores, 123" oninput="updP();liveUp()"></div></div>
+<div class="fld"><label class="lbl">Nome da loja</label><input type="text" id="f-sname" placeholder="Ex: Super Econômico" oninput="reSum();updP();liveUp()"></div>
+<div class="fld"><div class="tr2"><span class="lbl">Endereço / localização</span><label class="tog"><input type="checkbox" id="tog-sloc" onchange="togsec('body-sloc',this);updP();liveUp()"><span class="ts"></span></label></div><div id="body-sloc" style="opacity:.3;pointer-events:none"><input type="text" id="f-sloc" placeholder="Rua das Flores, 123" oninput="updP();liveUp()"></div></div>
+<div class="sep"></div>
+<div class="r2"><div class="fld"><label class="lbl">Fundo</label><div class="cr2"><input type="color" id="c-sbg" value="#cc0000" oninput="cpc('c-sbg','c-sbg-t')"><input type="text" id="c-sbg-t" value="#cc0000" oninput="ctc('c-sbg','c-sbg-t')"></div></div><div class="fld"><label class="lbl">Texto</label><div class="cr2"><input type="color" id="c-stx" value="#ffffff" oninput="cpc('c-stx','c-stx-t')"><input type="text" id="c-stx-t" value="#ffffff" oninput="ctc('c-stx','c-stx-t')"></div></div></div>
 <div class="sep"></div>
 <div class="slr">Altura <span class="slv" id="v-shh">28px</span></div><input type="range" id="s-shh" min="1" max="100" value="16" step="1" oninput="sl('v-shh',this.value,'px')">
 <div class="slr">Tam. nome <span class="slv" id="v-st">11pt</span></div><input type="range" id="s-store" min="6" max="32" value="11" oninput="sl('v-st',this.value,'pt')">
-<div class="slr">Tam. localização <span class="slv" id="v-sl">8pt</span></div><input type="range" id="s-sloc" min="5" max="22" value="8" oninput="sl('v-sl',this.value,'pt');updP();liveUp()">
 <div class="fld"><label class="lbl">Alinhamento</label><div class="aln" id="store-aln"><button class="ab" data-v="flex-start" onclick="setStoreAln('flex-start',this.parentNode)">◀ Esq</button><button class="ab on" data-v="center" onclick="setStoreAln('center',this.parentNode)">■ Centro</button><button class="ab" data-v="flex-end" onclick="setStoreAln('flex-end',this.parentNode)">Dir ▶</button></div></div>
 <div class="sep"></div>
-<div class="slr">Margem H <span class="slv" id="v-sph">8px</span></div><input type="range" id="s-sph" min="0" max="32" value="8" step="1" oninput="sl('v-sph',this.value,'px')">
-<div class="slr">Margem V <span class="slv" id="v-spv">4px</span></div><input type="range" id="s-spv" min="0" max="20" value="4" step="1" oninput="sl('v-spv',this.value,'px')">
-<div class="slr">Gap logo↔texto <span class="slv" id="v-sgi">6px</span></div><input type="range" id="s-sgi" min="0" max="24" value="6" step="1" oninput="sl('v-sgi',this.value,'px')">
-<div class="slr">Gap nome↕local. <span class="slv" id="v-sgt">2px</span></div><input type="range" id="s-sgt" min="0" max="16" value="2" step="1" oninput="sl('v-sgt',this.value,'px')">
-<div class="slr">Espaço abaixo <span class="slv" id="v-sg">0px</span></div><input type="range" id="s-sgap" min="0" max="20" value="0" step="1" oninput="sl('v-sg',this.value,'px')">
-<div class="sep"></div>
-<div class="r2"><div class="fld"><label class="lbl">Fundo</label><div class="cr2"><input type="color" id="c-sbg" value="#cc0000" oninput="cpc('c-sbg','c-sbg-t')"><input type="text" id="c-sbg-t" value="#cc0000" oninput="ctc('c-sbg','c-sbg-t')"></div></div><div class="fld"><label class="lbl">Texto</label><div class="cr2"><input type="color" id="c-stx" value="#ffffff" oninput="cpc('c-stx','c-stx-t')"><input type="text" id="c-stx-t" value="#ffffff" oninput="ctc('c-stx','c-stx-t')"></div></div></div>
-<div class="r2"><div class="fld"><label class="lbl">Cor localiz.</label><div class="cr2"><input type="color" id="c-sloc" value="#ffcccc" oninput="cpc('c-sloc','c-sloc-t')"><input type="text" id="c-sloc-t" value="#ffcccc" oninput="ctc('c-sloc','c-sloc-t')"></div></div><div class="fld"><label class="lbl">Arredond.</label><select id="f-srad" onchange="updP();liveUp()"><option value="0">Sem</option><option value="4">Leve 4px</option><option value="8">Médio 8px</option><option value="12">Forte 12px</option></select></div></div>
-<div class="sep"></div>
 <div class="tr2"><span class="lbl">Linha separadora</span><label class="tog"><input type="checkbox" id="tog-sborder" onchange="updP();liveUp()"><span class="ts"></span></label></div>
-<div class="r2"><div class="fld"><label class="lbl">Cor linha</label><input type="color" id="c-sborder" value="#ff9999" oninput="updP();liveUp()"></div><div class="fld"><label class="lbl">Espessura linha</label><div class="slr" style="margin-bottom:3px"><span></span><span class="slv" id="v-sborder">0.5px</span></div><input type="range" id="f-sborder" value="0.5" min="0.1" max="4" step="0.1" oninput="G('v-sborder').textContent=parseFloat(this.value).toFixed(1)+'px';liveUp()"></div></div>
+<div class="r2"><div class="fld"><label class="lbl">Cor linha</label><input type="color" id="c-sborder" value="#ff9999" oninput="updP();liveUp()"></div><div class="fld"><label class="lbl">Espessura</label><div class="slr" style="margin-bottom:3px"><span></span><span class="slv" id="v-sborder">0.5px</span></div><input type="range" id="f-sborder" value="0.5" min="0.1" max="4" step="0.1" oninput="G('v-sborder').textContent=parseFloat(this.value).toFixed(1)+'px';liveUp()"></div></div>
 <div class="sep"></div>
 <div class="fld"><label class="lbl">Logo</label><input type="file" class="fi" id="f-logo" accept="image/*" onchange="handleLogo(this)"><div style="display:flex;align-items:center;gap:8px;margin-top:5px"><img id="logo-prev" style="max-width:70px;max-height:22px;display:none;border-radius:3px;border:1px solid var(--bd2)"><span id="logo-rm" style="font-size:10px;color:#e87171;cursor:pointer;display:none" onclick="removeLogo()">✕ remover</span></div></div>
 <div class="slr">Tam. máx. logo <span class="slv" id="v-sls">40%</span></div><input type="range" id="s-sls" min="10" max="80" value="40" step="5" oninput="sl('v-sls',this.value,'%')">
+<div class="sep"></div>
+<div class="slr">Margem H <span class="slv" id="v-sph">8px</span></div><input type="range" id="s-sph" min="0" max="32" value="8" step="1" oninput="sl('v-sph',this.value,'px')">
+<div class="slr">Margem V <span class="slv" id="v-spv">4px</span></div><input type="range" id="s-spv" min="0" max="20" value="4" step="1" oninput="sl('v-spv',this.value,'px')">
+<div class="slr">Espaço logo↔texto <span class="slv" id="v-sgi">6px</span></div><input type="range" id="s-sgi" min="0" max="24" value="6" step="1" oninput="sl('v-sgi',this.value,'px')">
+<div class="slr">Espaço nome↕local. <span class="slv" id="v-sgt">2px</span></div><input type="range" id="s-sgt" min="0" max="16" value="2" step="1" oninput="sl('v-sgt',this.value,'px')">
+<div class="slr">Espaço abaixo cabeçalho <span class="slv" id="v-sg">0px</span></div><input type="range" id="s-sgap" min="0" max="20" value="0" step="1" oninput="sl('v-sg',this.value,'px')">
+<div class="r2"><div class="fld"><label class="lbl">Cor localiz.</label><div class="cr2"><input type="color" id="c-sloc" value="#ffcccc" oninput="cpc('c-sloc','c-sloc-t')"><input type="text" id="c-sloc-t" value="#ffcccc" oninput="ctc('c-sloc','c-sloc-t')"></div></div><div class="fld"><label class="lbl">Tam. localização <span class="slv" id="v-sl">8pt</span></label><input type="range" id="s-sloc" min="5" max="22" value="8" oninput="sl('v-sl',this.value,'pt');updP();liveUp()"></div></div>
+<div class="fld"><label class="lbl">Arredondamento</label><select id="f-srad" onchange="updP();liveUp()"><option value="0">Sem</option><option value="4">Leve</option><option value="8">Médio</option><option value="12">Forte</option></select></div>
 </div></div></div>
 
-<!-- DESC -->
-<div class="card" id="c-desc"><div class="cah" onclick="tcard('c-desc')"><span class="cai">📝</span><div class="cam"><div class="cat">Descrição</div><div class="cas" id="sum-desc">Arroz Tipo 1 5kg · 12pt</div></div><div class="car"><label class="tog" onclick="event.stopPropagation()"><input type="checkbox" id="tog-desc" checked onchange="ontog('body-desc',this,'sum-desc')"><span class="ts"></span></label><span class="caa">▾</span></div></div>
+<!-- DESCRIÇÃO -->
+<div class="card" id="c-desc"><div class="cah" onclick="tcard('c-desc')"><span class="cai">📝</span><div class="cam"><div class="cat">Descrição do produto</div><div class="cas" id="sum-desc">Arroz Tipo 1 5kg · 12pt</div></div><div class="car"><label class="tog" onclick="event.stopPropagation()"><input type="checkbox" id="tog-desc" checked onchange="ontog('body-desc',this,'sum-desc')"><span class="ts"></span></label><span class="caa">▾</span></div></div>
 <div class="cab"><div id="body-desc">
 <div class="spv"><div id="prev-desc" style="padding:8px 10px;font-size:12px;color:#111;font-family:Arial;line-height:1.2;min-height:32px;background:#fff;word-break:break-word;overflow:hidden"></div></div>
 <div class="fld"><textarea id="f-desc" oninput="this.value=applyDescCase(this.value);syncDQ();reSum();updP();liveUp()">Arroz Tipo 1 5kg</textarea></div>
-<div class="r2" style="margin-bottom:6px"><div><div class="slr">Tamanho <span class="slv" id="v-d">12pt</span></div><input type="range" id="s-d" min="6" max="36" value="12" oninput="sl('v-d',this.value,'pt')"></div><div><div class="slr">Altura linha <span class="slv" id="v-dlh">1.2</span></div><input type="range" id="s-dlh" min="7" max="22" value="12" step="1" oninput="sl('v-dlh',this.value/10,'')"></div></div>
-<div class="slr">Espaç. letras <span class="slv" id="v-dls">0px</span></div><input type="range" id="s-dls" min="0" max="8" value="0" step="1" oninput="sl('v-dls',this.value,'px')">
-<div class="slr">Empurrar preço para baixo <span class="slv" id="v-bgap">auto</span></div><input type="range" id="s-bgap" min="0" max="120" value="0" step="1" oninput="sl('v-bgap',this.value==0?'auto':this.value+'px','')">
+<div class="r2" style="margin-bottom:6px">
+<div><div class="slr">Tamanho <span class="slv" id="v-d">12pt</span></div><input type="range" id="s-d" min="6" max="36" value="12" oninput="sl('v-d',this.value,'pt')"></div>
+<div><div class="slr">Altura de linha <span class="slv" id="v-dlh">1.2</span></div><input type="range" id="s-dlh" min="7" max="22" value="12" step="1" oninput="sl('v-dlh',this.value/10,'')"></div>
+</div>
+<div class="slr">Espaçamento letras <span class="slv" id="v-dls">0px</span></div><input type="range" id="s-dls" min="0" max="8" value="0" step="1" oninput="sl('v-dls',this.value,'px')">
+<div class="slr">Empurrar preço ↓ <span class="slv" id="v-bgap">auto</span></div><input type="range" id="s-bgap" min="0" max="120" value="0" step="1" oninput="sl('v-bgap',this.value==0?'auto':this.value+'px','')">
 <div class="fld"><label class="lbl">Alinhamento</label><div class="aln" id="ad"><button class="ab on" data-v="left" onclick="setAln('d','left',this.parentNode)">◀ Esq</button><button class="ab" data-v="center" onclick="setAln('d','center',this.parentNode)">■ Centro</button><button class="ab" data-v="right" onclick="setAln('d','right',this.parentNode)">Dir ▶</button></div></div>
 <div class="sep"></div>
 <div class="fmts"><button class="fb" id="btn-dbold" onclick="tFmt('d','bold')"><b>B</b></button><button class="fb" id="btn-ditalic" onclick="tFmt('d','italic')"><i>I</i></button><button class="fb" id="btn-dtitle" onclick="tFmt('d','title')">Aa</button><button class="fb" id="btn-dupper" onclick="tFmt('d','upper')">AA</button><button class="fb" id="btn-dshadow" onclick="tFmt('d','shadow')">◑</button></div>
 <div class="sep"></div>
-<div class="r2"><div class="fld"><label class="lbl">Cor texto</label><div class="cr2"><input type="color" id="c-tx" value="#111111" oninput="cpc('c-tx','c-tx-t')"><input type="text" id="c-tx-t" value="#111111" oninput="ctc('c-tx','c-tx-t')"></div><div class="sws" id="sw-tx"></div></div><div class="fld"><div class="tr2"><label class="lbl">Fundo destaque</label><label class="tog"><input type="checkbox" id="tog-desc-bg" onchange="updP();liveUp()"><span class="ts"></span></label></div><input type="color" id="c-desc-bg" value="#ffff00" oninput="updP();liveUp()"></div></div>
+<div class="r2"><div class="fld"><label class="lbl">Cor do texto</label><div class="cr2"><input type="color" id="c-tx" value="#111111" oninput="cpc('c-tx','c-tx-t')"><input type="text" id="c-tx-t" value="#111111" oninput="ctc('c-tx','c-tx-t')"></div><div class="sws" id="sw-tx"></div></div><div class="fld"><div class="tr2"><label class="lbl">Fundo destaque</label><label class="tog"><input type="checkbox" id="tog-desc-bg" onchange="updP();liveUp()"><span class="ts"></span></label></div><input type="color" id="c-desc-bg" value="#ffff00" oninput="updP();liveUp()"></div></div>
 </div></div></div>
 
-<!-- PREÇO — tipografia completa restaurada -->
-<div class="card" id="c-price"><div class="cah" onclick="tcard('c-price')"><span class="cai">💰</span><div class="cam"><div class="cat">Preço principal</div><div class="cas" id="sum-price">R$ 8,99 · 28pt</div></div><div class="car"><span class="caa">▾</span></div></div>
+<!-- PREÇO -->
+<div class="card" id="c-price"><div class="cah" onclick="tcard('c-price')"><span class="cai">💰</span><div class="cam"><div class="cat">Preço</div><div class="cas" id="sum-price">R$ 8,99 · 28pt</div></div><div class="car"><span class="caa">▾</span></div></div>
 <div class="cab">
 <div class="spv"><div id="prev-price" style="padding:8px 10px;display:flex;align-items:baseline;justify-content:center;gap:2px;background:#fff;min-height:44px;overflow:hidden"><span id="pp-cs" style="font-size:28px;color:#cc0000;font-weight:700;font-family:Arial;line-height:1">R$</span><span id="pp-n" style="font-size:28px;color:#cc0000;font-weight:700;font-family:Arial;line-height:1">8,99</span><span id="pp-u" style="font-size:10px;color:#444;font-family:Arial">/kg</span></div></div>
-<div class="r2" style="margin-bottom:8px"><div class="fld"><label class="lbl">Valor</label><input type="text" id="f-price" value="8,99" oninput="syncPQ();reSum();updP();liveUp()" style="font-size:16px;font-weight:700"></div><div class="fld"><div class="tr2"><label class="lbl">Unidade</label><label class="tog"><input type="checkbox" id="tog-unit" checked onchange="togsec('body-unit',this);updP();liveUp()"><span class="ts"></span></label></div><div id="body-unit"><input type="text" id="f-unit" value="kg" oninput="syncUQ();updP();liveUp()"></div></div></div>
-<div class="r2" style="margin-bottom:6px"><div><div class="slr">Tam. número <span class="slv" id="v-p">27pt</span></div><input type="range" id="s-p" min="8" max="80" value="27" oninput="sl('v-p',this.value,'pt')"></div><div><div class="slr">Tam. unidade <span class="slv" id="v-u">10pt</span></div><input type="range" id="s-u" min="6" max="24" value="10" oninput="sl('v-u',this.value,'pt')"></div></div>
-<div class="slr">Tam. símbolo R$ <span class="slv" id="v-cssz">100%</span></div><input type="range" id="s-cssz" min="40" max="100" value="100" step="5" oninput="sl('v-cssz',this.value,'%')">
-<div class="slr">Espaç. letras (número) <span class="slv" id="v-pls">0px</span></div><input type="range" id="s-pls" min="-4" max="12" value="0" step="1" oninput="sl('v-pls',this.value,'px')">
-<div class="slr">Espaç. letras (símbolo) <span class="slv" id="v-csls">0px</span></div><input type="range" id="s-csls" min="-2" max="8" value="0" step="1" oninput="sl('v-csls',this.value,'px')">
+<div class="r2" style="margin-bottom:8px">
+<div class="fld"><label class="lbl">Valor</label><input type="text" id="f-price" value="8,99" oninput="syncPQ();reSum();updP();liveUp()" style="font-size:16px;font-weight:700"></div>
+<div class="fld"><div class="tr2"><label class="lbl">Unidade</label><label class="tog"><input type="checkbox" id="tog-unit" checked onchange="togsec('body-unit',this);updP();liveUp()"><span class="ts"></span></label></div><div id="body-unit"><input type="text" id="f-unit" value="kg" oninput="syncUQ();updP();liveUp()"></div></div>
+</div>
+<div class="r2" style="margin-bottom:6px">
+<div><div class="slr">Tam. número <span class="slv" id="v-p">27pt</span></div><input type="range" id="s-p" min="8" max="80" value="27" oninput="sl('v-p',this.value,'pt')"></div>
+<div><div class="slr">Tam. unidade <span class="slv" id="v-u">10pt</span></div><input type="range" id="s-u" min="6" max="24" value="10" oninput="sl('v-u',this.value,'pt')"></div>
+</div>
 <div class="fld"><label class="lbl">Alinhamento</label><div class="aln" id="ap"><button class="ab" data-v="left" onclick="setAln('p','left',this.parentNode)">◀ Esq</button><button class="ab on" data-v="center" onclick="setAln('p','center',this.parentNode)">■ Centro</button><button class="ab" data-v="right" onclick="setAln('p','right',this.parentNode)">Dir ▶</button></div></div>
 <div class="sep"></div>
-<div class="r2"><div class="fld"><label class="lbl">Posição símbolo</label><select id="f-cspos" onchange="updP();liveUp()"><option value="before">Antes (R$ 9,99)</option><option value="after">Depois (9,99 R$)</option><option value="none">Sem símbolo</option></select></div><div class="fld"><label class="lbl">Símbolo moeda</label><select id="f-currency" onchange="reSum();updP();liveUp()"><option value="R$">R$</option><option value="$">$</option><option value="€">€</option><option value="£">£</option><option value="">Custom</option></select></div></div>
+<div class="r2">
+<div class="fld"><label class="lbl">Símbolo</label><select id="f-currency" onchange="reSum();updP();liveUp()"><option value="R$">R$</option><option value="$">$</option><option value="€">€</option><option value="£">£</option><option value="">Custom</option></select></div>
+<div class="fld"><label class="lbl">Posição</label><select id="f-cspos" onchange="updP();liveUp()"><option value="before">Antes (R$ 9,99)</option><option value="after">Depois (9,99 R$)</option><option value="none">Sem símbolo</option></select></div>
+</div>
 <div class="fld"><label class="lbl">Símbolo personalizado</label><input type="text" id="f-custom-cs" placeholder="Ex: USD, BTC…" maxlength="6" oninput="updP();liveUp()"></div>
-<div class="fld"><label class="lbl">Posição da unidade</label><select id="f-upos" onchange="updP();liveUp()"><option value="after">Depois (/kg)</option><option value="above">Acima do número</option><option value="below">Abaixo do número</option></select></div>
-<div class="fld"><label class="lbl">Gap símbolo↔número</label><select id="f-csgap" onchange="updP();liveUp()"><option value="0">Sem gap</option><option value="2">Pequeno 2px</option><option value="4" selected>Normal 4px</option><option value="8">Largo 8px</option></select></div>
+<div class="r2">
+<div class="fld"><label class="lbl">Posição da unidade</label><select id="f-upos" onchange="updP();liveUp()"><option value="after">Depois (/kg)</option><option value="above">Acima</option><option value="below">Abaixo</option></select></div>
+<div class="fld"><label class="lbl">Gap símbolo↔nº</label><select id="f-csgap" onchange="updP();liveUp()"><option value="0">Sem</option><option value="2">Pequeno</option><option value="4" selected>Normal</option><option value="8">Largo</option></select></div>
+</div>
 <div class="sep"></div>
-<label class="lbl" style="margin-bottom:5px">Estilo do número</label>
-<div class="fmts"><button class="fb on" id="btn-pbold" onclick="tFmt('p','bold')"><b>B</b></button><button class="fb" id="btn-pitalic" onclick="tFmt('p','italic')"><i>I</i></button><button class="fb" id="btn-pshadow" onclick="tFmt('p','shadow')">◑</button><button class="fb" id="btn-poutline" onclick="tFmt('p','outline')">⬡</button></div>
-<label class="lbl" style="margin-bottom:5px">Estilo do símbolo R$</label>
-<div class="fmts"><button class="fb" id="btn-csbold" onclick="tFmtCS('bold')"><b>B</b></button><button class="fb" id="btn-csitalic" onclick="tFmtCS('italic')"><i>I</i></button><button class="fb" id="btn-cssup" onclick="tFmtCS('sup')">sup</button></div>
+<div class="r2">
+<div class="fld"><label class="lbl">Estilo número</label><div class="fmts"><button class="fb on" id="btn-pbold" onclick="tFmt('p','bold')"><b>B</b></button><button class="fb" id="btn-pitalic" onclick="tFmt('p','italic')"><i>I</i></button><button class="fb" id="btn-pshadow" onclick="tFmt('p','shadow')">◑</button><button class="fb" id="btn-poutline" onclick="tFmt('p','outline')">⬡</button></div></div>
+<div class="fld"><label class="lbl">Estilo símbolo</label><div class="fmts"><button class="fb" id="btn-csbold" onclick="tFmtCS('bold')"><b>B</b></button><button class="fb" id="btn-csitalic" onclick="tFmtCS('italic')"><i>I</i></button><button class="fb" id="btn-cssup" onclick="tFmtCS('sup')">sup</button></div></div>
+</div>
+<div class="slr">Tam. símbolo R$ <span class="slv" id="v-cssz">100%</span></div><input type="range" id="s-cssz" min="40" max="100" value="100" step="5" oninput="sl('v-cssz',this.value,'%')">
 <div class="sep"></div>
-<div class="r2"><div class="fld"><label class="lbl">Cor preço</label><div class="cr2"><input type="color" id="c-pr" value="#cc0000" oninput="cpc('c-pr','c-pr-t')"><input type="text" id="c-pr-t" value="#cc0000" oninput="ctc('c-pr','c-pr-t')"></div><div class="sws" id="sw-pr"></div></div><div class="fld"><label class="lbl">Cor unidade</label><input type="color" id="c-unit" value="#444444" oninput="updP();liveUp()"></div></div>
-<div class="r2"><div class="fld"><label class="lbl">Cor símbolo</label><input type="color" id="c-cs" value="#cc0000" oninput="updP();liveUp()"></div><div class="fld"><div class="tr2"><label class="lbl">Fundo destaque</label><label class="tog"><input type="checkbox" id="tog-pbg" onchange="updP();liveUp()"><span class="ts"></span></label></div></div></div>
-<div class="r2"><div class="cr2"><input type="color" id="c-pbg" value="#fef08a" oninput="updP();liveUp()"><span style="font-size:11px;color:var(--tx3)">Cor</span></div><div><div class="slr">Arredond. <span class="slv" id="v-pbr">4px</span></div><input type="range" id="s-pbr" min="0" max="20" value="4" step="1" oninput="sl('v-pbr',this.value,'px')"></div></div>
+<div class="r2">
+<div class="fld"><label class="lbl">Cor preço</label><div class="cr2"><input type="color" id="c-pr" value="#cc0000" oninput="cpc('c-pr','c-pr-t')"><input type="text" id="c-pr-t" value="#cc0000" oninput="ctc('c-pr','c-pr-t')"></div><div class="sws" id="sw-pr"></div></div>
+<div class="fld"><label class="lbl">Cor símbolo</label><input type="color" id="c-cs" value="#cc0000" oninput="updP();liveUp()"></div>
+</div>
+<div class="r2">
+<div class="fld"><label class="lbl">Cor unidade</label><input type="color" id="c-unit" value="#444444" oninput="updP();liveUp()"></div>
+<div class="fld"><div class="tr2"><label class="lbl">Fundo destaque</label><label class="tog"><input type="checkbox" id="tog-pbg" onchange="updP();liveUp()"><span class="ts"></span></label></div></div>
+</div>
+<div class="r2"><div class="cr2"><input type="color" id="c-pbg" value="#fef08a" oninput="updP();liveUp()"><span style="font-size:11px;color:var(--tx3)">Cor fundo</span></div><div><div class="slr">Arredond. <span class="slv" id="v-pbr">4px</span></div><input type="range" id="s-pbr" min="0" max="20" value="4" step="1" oninput="sl('v-pbr',this.value,'px')"></div></div>
+<div class="slr">Espaç. letras (nº) <span class="slv" id="v-pls">0px</span></div><input type="range" id="s-pls" min="-4" max="12" value="0" step="1" oninput="sl('v-pls',this.value,'px')">
+<div class="slr">Espaç. letras (símbolo) <span class="slv" id="v-csls">0px</span></div><input type="range" id="s-csls" min="-2" max="8" value="0" step="1" oninput="sl('v-csls',this.value,'px')">
 </div></div>
 
 <!-- PREÇO ANTERIOR -->
-<div class="card" id="c-old"><div class="cah" onclick="tcard('c-old')"><span class="cai">✂️</span><div class="cam"><div class="cat">Preço riscado — "De R$..."</div><div class="cas" id="sum-old">Desativado</div></div><div class="car"><label class="tog" onclick="event.stopPropagation()"><input type="checkbox" id="tog-old" onchange="ontog('body-old',this,'sum-old')"><span class="ts"></span></label><span class="caa">▾</span></div></div>
+<div class="card" id="c-old"><div class="cah" onclick="tcard('c-old')"><span class="cai">✂️</span><div class="cam"><div class="cat">Preço "De…" riscado</div><div class="cas" id="sum-old">Desativado</div></div><div class="car"><label class="tog" onclick="event.stopPropagation()"><input type="checkbox" id="tog-old" onchange="ontog('body-old',this,'sum-old')"><span class="ts"></span></label><span class="caa">▾</span></div></div>
 <div class="cab"><div id="body-old" style="opacity:.3;pointer-events:none">
 <div class="r2" style="margin-bottom:8px"><div class="fld"><label class="lbl">Preço anterior</label><input type="text" id="f-old" value="12,99" oninput="syncOQ();reSum();updP();liveUp()"></div><div class="fld"><label class="lbl">Prefixo</label><select id="f-oldpfx" onchange="updP();liveUp()"><option value="De:">De:</option><option value="Era:">Era:</option><option value="Antes:">Antes:</option><option value="">Sem</option></select></div></div>
 <div class="r2"><div class="fld"><label class="lbl">Cor</label><div class="cr2"><input type="color" id="c-old" value="#888888" oninput="cpc('c-old','c-old-t')"><input type="text" id="c-old-t" value="#888888" oninput="ctc('c-old','c-old-t')"></div></div><div class="fld"><label class="lbl">Estilo</label><select id="f-oldstyle" onchange="updP();liveUp()"><option value="line">Riscado</option><option value="badge">Crachá</option><option value="double">2 riscos</option></select></div></div>
@@ -468,7 +463,7 @@ onkeydown="if(event.key==='Enter'){event.preventDefault();addTag();setTimeout(()
 <div class="tr2"><span class="lbl">Mostrar % de economia</span><label class="tog"><input type="checkbox" id="tog-sav" onchange="updP();liveUp()"><span class="ts"></span></label></div>
 </div></div></div>
 
-<!-- SELO — 6 estilos restaurados -->
+<!-- SELO -->
 <div class="card" id="c-badge"><div class="cah" onclick="tcard('c-badge')"><span class="cai">🏷️</span><div class="cam"><div class="cat">Selo de promoção</div><div class="cas" id="sum-badge">Desativado</div></div><div class="car"><label class="tog" onclick="event.stopPropagation()"><input type="checkbox" id="tog-badge" onchange="ontog('body-badge',this,'sum-badge')"><span class="ts"></span></label><span class="caa">▾</span></div></div>
 <div class="cab"><div id="body-badge" style="opacity:.3;pointer-events:none">
 <div class="fld"><label class="lbl">Estilo</label><div class="bsg" id="badge-style-grid">
@@ -479,28 +474,53 @@ onkeydown="if(event.key==='Enter'){event.preventDefault();addTag();setTimeout(()
 <div class="bso" data-v="starburst" onclick="setBstyle('starburst',this)">✦ Estrela</div>
 <div class="bso" data-v="tag" onclick="setBstyle('tag',this)">🏷 Tag</div>
 </div></div>
-<div class="r2"><div class="fld"><label class="lbl">Texto</label><select id="f-badge" onchange="bsel();reSum();updP();liveUp()"><option>OFERTA</option><option>PROMOÇÃO</option><option>NOVO</option><option>ÚLTIMA UN.</option><option>DESTAQUE</option><option>LEVE 3 PAGUE 2</option><option value="__cus">Personalizado</option></select></div><div class="fld"><label class="lbl">Cor fundo / texto</label><div class="cr2"><input type="color" id="c-badge-col" value="#dc2626" oninput="updP();liveUp()" onchange="updP();liveUp()" title="Cor de fundo do selo"><input type="color" id="c-badge-tx" value="#ffffff" oninput="updP();liveUp()" onchange="updP();liveUp()" title="Cor do texto do selo"></div></div></div>
+<div class="r2"><div class="fld"><label class="lbl">Texto</label><select id="f-badge" onchange="bsel();reSum();updP();liveUp()"><option>OFERTA</option><option>PROMOÇÃO</option><option>NOVO</option><option>ÚLTIMA UN.</option><option>DESTAQUE</option><option>LEVE 3 PAGUE 2</option><option value="__cus">Personalizado</option></select></div><div class="fld"><label class="lbl">Fundo / texto</label><div class="cr2"><input type="color" id="c-badge-col" value="#dc2626" oninput="updP();liveUp()" onchange="updP();liveUp()"><input type="color" id="c-badge-tx" value="#ffffff" oninput="updP();liveUp()" onchange="updP();liveUp()"></div></div></div>
 <div id="body-badcus" style="display:none;margin-bottom:8px"><input type="text" id="f-badcus" placeholder="Texto personalizado" maxlength="18" oninput="reSum();updP();liveUp()"></div>
 <div class="r2"><div class="fld"><label class="lbl">Posição</label><select id="f-badgepos" onchange="liveUp()"><option value="tr">Sup. dir.</option><option value="tl">Sup. esq.</option><option value="br">Inf. dir.</option><option value="bl">Inf. esq.</option></select></div><div class="fld"><label class="lbl">Tamanho</label><select id="f-badgesz" onchange="updP();liveUp()"><option value="sm">Pequeno</option><option value="md" selected>Médio</option><option value="lg">Grande</option></select></div></div>
 </div></div></div>
 
-<!-- TAMANHO -->
-<div class="card" id="c-size"><div class="cah" onclick="tcard('c-size')"><span class="cai">📐</span><div class="cam"><div class="cat">Tamanho da etiqueta (mm)</div><div class="cas" id="sum-size">90 × 55 mm</div></div><div class="car"><span class="caa">▾</span></div></div>
-<div class="cab"><div style="padding:8px;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px"><div id="prev-size-box" style="border:2px solid #4d90fe;border-radius:2px;background:#e8f0fe;transition:all .2s"></div><span id="prev-size-lbl" style="font-size:11px;color:var(--tx3)">90 × 55 mm</span></div><div class="r2"><div class="fld"><label class="lbl">Largura (mm)</label><input type="number" id="f-w" value="47" min="20" max="210" oninput="syncWQ();reSum();updP();liveUp()"></div><div class="fld"><label class="lbl">Altura (mm)</label><input type="number" id="f-h" value="36" min="15" max="297" oninput="syncHQ();reSum();updP();liveUp()"></div></div></div></div>
+<!-- CÓDIGO DE BARRAS -->
+<div class="card" id="c-barcode"><div class="cah" onclick="tcard('c-barcode')"><span class="cai">📊</span><div class="cam"><div class="cat">Código de barras</div><div class="cas" id="sum-bc">Desativado</div></div><div class="car"><label class="tog" onclick="event.stopPropagation()"><input type="checkbox" id="tog-bc-cfg" onchange="onBCCfgTog(this.checked)"><span class="ts"></span></label><span class="caa">▾</span></div></div>
+<div class="cab"><div id="body-bc" style="opacity:.3;pointer-events:none">
+<div class="spv"><div id="bc-prev-cfg" style="min-height:50px;background:#fff;display:flex;align-items:center;justify-content:center;padding:6px"><span style="font-size:10px;color:#aaa">Digite o código abaixo para visualizar</span></div></div>
+<div class="fld"><label class="lbl">Código EAN</label><input type="text" id="bc-val-cfg" placeholder="7891234567890" maxlength="20" style="font-family:monospace;font-size:14px;letter-spacing:.06em" oninput="syncBCVals();renderBCPrevCfg();liveUp()"></div>
+<div class="r2"><div class="fld"><label class="lbl">Tipo</label><select id="bc-type" onchange="renderBCPrevCfg();liveUp()"><option value="auto">AUTO</option><option value="EAN13">EAN-13</option><option value="EAN8">EAN-8</option><option value="CODE128">CODE 128</option><option value="CODE39">CODE 39</option><option value="UPC">UPC-A</option></select></div>
+<div class="fld"><label class="lbl">Posição</label><select id="bc-pos" onchange="liveUp()"><option value="bottom">Inferior</option><option value="top">Superior</option></select></div></div>
+<div class="r2">
+<div><div class="slr">Altura <span class="slv" id="v-bc-h">28px</span></div><input type="range" id="s-bc-h" min="16" max="60" value="28" step="2" oninput="sl('v-bc-h',this.value,'px');renderBCPrevCfg();liveUp()"></div>
+<div><div class="slr">Largura barras <span class="slv" id="v-bc-w">1.2</span></div><input type="range" id="s-bc-w" min="10" max="30" value="12" step="1" oninput="sl('v-bc-w',(this.value/10).toFixed(1),'');renderBCPrevCfg();liveUp()"></div>
+</div>
+<div class="slr">Margem <span class="slv" id="v-bc-m">2px</span></div><input type="range" id="s-bc-m" min="0" max="12" value="2" step="1" oninput="sl('v-bc-m',this.value,'px');renderBCPrevCfg();liveUp()">
+<div class="r2"><div class="fld"><label class="lbl">Cor barras</label><input type="color" id="bc-color-cfg" value="#000000" oninput="syncBCColors();renderBCPrevCfg();liveUp()"></div><div class="fld"><label class="lbl">Cor fundo</label><input type="color" id="bc-bg-cfg" value="#ffffff" oninput="syncBCColors();renderBCPrevCfg();liveUp()"></div></div>
+<div class="r2" style="margin-bottom:8px">
+<div class="tr2"><span class="lbl">Mostrar número</span><label class="tog"><input type="checkbox" id="tog-bc-txt-cfg" checked onchange="syncBCTxt();renderBCPrevCfg();liveUp()"><span class="ts"></span></label></div>
+<div><div class="slr">Tam. fonte <span class="slv" id="v-bc-fsz">8px</span></div><input type="range" id="s-bc-fsz" min="6" max="14" value="8" step="1" oninput="sl('v-bc-fsz',this.value,'px');renderBCPrevCfg();liveUp()"></div>
+</div>
+<div class="slr">Posição número ↕ <span class="slv" id="v-bc-tm">1</span></div><input type="range" id="s-bc-tm" min="-10" max="20" value="1" step="1" oninput="sl('v-bc-tm',this.value,'');renderBCPrevCfg();liveUp()">
+<div class="tr2" style="margin-bottom:8px"><span class="lbl">Apenas número (sem barras)</span><label class="tog"><input type="checkbox" id="tog-bc-numonly" onchange="liveUp()"><span class="ts"></span></label></div>
+<div class="fld"><label class="lbl">Texto acima (opcional)</label><input type="text" id="bc-above" placeholder="Ex: Escaneie aqui" maxlength="40" oninput="liveUp()"></div>
+<div class="fld"><label class="lbl">Texto abaixo (opcional)</label><input type="text" id="bc-below" placeholder="Ex: www.loja.com.br" maxlength="40" oninput="liveUp()"></div>
+<div class="tr2"><span class="lbl">Linha separadora acima</span><label class="tog"><input type="checkbox" id="tog-bc-sep" onchange="liveUp()"><span class="ts"></span></label></div>
+</div></div></div>
 
-<!-- GLOBAL -->
-<div class="card" id="c-global"><div class="cah" onclick="tcard('c-global')"><span class="cai">🎨</span><div class="cam"><div class="cat">Cores e fonte</div><div class="cas" id="sum-global">Branco · Arial</div></div><div class="car"><span class="caa">▾</span></div></div>
+<!-- APARÊNCIA GERAL -->
+<div class="card" id="c-global"><div class="cah" onclick="tcard('c-global')"><span class="cai">🖌️</span><div class="cam"><div class="cat">Aparência geral</div><div class="cas" id="sum-global">Branco · Arial</div></div><div class="car"><span class="caa">▾</span></div></div>
 <div class="cab">
 <div class="spv"><div id="prev-global" style="height:52px;display:flex;flex-direction:column;overflow:hidden;border:1px solid #ccc;border-radius:4px"><div id="pg-store" style="height:0;background:#cc0000;flex-shrink:0;overflow:hidden"></div><div id="pg-body" style="flex:1;background:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;padding:3px 6px"><div id="pg-desc" style="font-size:7px;color:#111;font-family:Arial">Produto Exemplo</div><div id="pg-price" style="font-size:15px;color:#cc0000;font-weight:700;font-family:Arial;line-height:1">R$9,99</div></div></div></div>
 <div class="fld"><label class="lbl">Fonte</label><select id="f-font" onchange="reSum();updP();liveUp()"><option value="Arial,sans-serif">Arial</option><option value="'Times New Roman',serif">Times New Roman</option><option value="Georgia,serif">Georgia</option><option value="Verdana,sans-serif">Verdana</option><option value="Impact,sans-serif">Impact</option><option value="'Trebuchet MS',sans-serif">Trebuchet MS</option></select></div>
-<div class="r2"><div class="fld"><label class="lbl">Fundo etiqueta</label><div class="cr2"><input type="color" id="c-bg" value="#ffffff" oninput="cpc('c-bg','c-bg-t')"><input type="text" id="c-bg-t" value="#ffffff" oninput="ctc('c-bg','c-bg-t')"></div><div class="sws" id="sw-bg"></div></div><div class="fld"><label class="lbl">Borda</label><div class="cr2"><input type="color" id="c-bd" value="#cccccc" oninput="cpc('c-bd','c-bd-t')"><input type="text" id="c-bd-t" value="#cccccc" oninput="ctc('c-bd','c-bd-t')"></div></div></div>
+<div class="r2"><div class="fld"><label class="lbl">Fundo etiqueta</label><div class="cr2"><input type="color" id="c-bg" value="#ffffff" oninput="cpc('c-bg','c-bg-t')"><input type="text" id="c-bg-t" value="#ffffff" oninput="ctc('c-bg','c-bg-t')"></div><div class="sws" id="sw-bg"></div></div><div class="fld"><label class="lbl">Cor borda</label><div class="cr2"><input type="color" id="c-bd" value="#cccccc" oninput="cpc('c-bd','c-bd-t')"><input type="text" id="c-bd-t" value="#cccccc" oninput="ctc('c-bd','c-bd-t')"></div></div></div>
 <div class="slr">Espessura borda <span class="slv" id="v-bw">1px</span></div><input type="range" id="s-bw" min="0" max="6" value="1" step="1" oninput="sl('v-bw',this.value,'px')">
 <div class="slr">Padding interno <span class="slv" id="v-pd">6px</span></div><input type="range" id="s-pd" min="2" max="20" value="6" step="1" oninput="sl('v-pd',this.value,'px')">
 <div class="sep"></div>
-<button class="btn" onclick="copyStyleAll()">Copiar estilo → todas as etiquetas</button>
+<button class="btn" onclick="copyStyleAll()">Copiar aparência → todas as etiquetas</button>
 <button class="btn" onclick="autoGrid()">⊞ Distribuir em grade</button>
 <button class="btn btnr" onclick="clearAll()">🗑 Limpar folha</button>
 </div></div>
+
+<!-- SALVAR -->
+<div class="card" id="c-save"><div class="cah" onclick="tcard('c-save')"><span class="cai">💾</span><div class="cam"><div class="cat">Salvar / Exportar configuração</div><div class="cas">Auto-salva ao modificar</div></div><div class="car"><span class="caa">▾</span></div></div>
+<div class="cab"><div class="r2"><button class="btn btnb" onclick="saveConf()">💾 Salvar agora</button><button class="btn" onclick="loadConf()">📂 Carregar</button></div><div class="r2"><button class="btn" onclick="exportConfJSON()">⬇ Exportar .json</button><button class="btn" style="position:relative;overflow:hidden">📁 Importar .json<input type="file" accept=".json" onchange="importConfJSON(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></button></div></div></div>
+
 </div>
 <div class="aw"><button class="addb" onclick="addTag()">+ Adicionar etiqueta à folha</button></div>
 </div>
@@ -614,16 +634,9 @@ let gridOn=false;
 let _gridRef=null;
 
 function _updateGridRef(){
-  if(!tags[0])return;
   const t=tags[0];
-  // Calcula gap a partir da segunda etiqueta (horizontal e vertical)
-  const wpx=t.wMM*MM*SC, hpx=t.hMM*MM*SC;
-  let gapX=10, gapY=10; // padrão = margem de findPos
-  const same=tags.find(u=>u!==t&&Math.abs(u.y-t.y)<hpx*0.5);
-  if(same)gapX=Math.max(0,same.x-(t.x+wpx));
-  const below=tags.find(u=>u!==t&&Math.abs(u.x-t.x)<wpx*0.5&&u.y>t.y);
-  if(below)gapY=Math.max(0,below.y-(t.y+hpx));
-  _gridRef={wMM:t.wMM,hMM:t.hMM,x:t.x,y:t.y,gapX,gapY};
+  if(!t)return;
+  _gridRef={wMM:t.wMM, hMM:t.hMM, x:t.x, y:t.y, gapX:10, gapY:10};
 }
 
 function toggleGrid(){
@@ -657,13 +670,17 @@ function _drawGrid(ov,wpx,hpx,ox,oy,gapX,gapY,wMM,hMM){
   const cols=Math.floor((SW-ox+gapX)/stepX);
   const rows=Math.floor((SH-oy+gapY)/stepY);
   const total=cols*rows;
+  // Arredonda uma vez só para evitar tremido
+  const rwpx=Math.round(wpx), rhpx=Math.round(hpx);
+  const rstepX=Math.round(stepX), rstepY=Math.round(stepY);
+  const rox=Math.round(ox), roy=Math.round(oy);
   let n=0;
   for(let r=0;r<rows;r++){
     for(let c=0;c<cols;c++){
       n++;
       const cell=document.createElement('div');
       cell.className='grid-cell';
-      cell.style.cssText=`left:${Math.round(ox+c*stepX)}px;top:${Math.round(oy+r*stepY)}px;width:${Math.round(wpx)}px;height:${Math.round(hpx)}px`;
+      cell.style.cssText=`left:${rox+c*rstepX}px;top:${roy+r*rstepY}px;width:${rwpx}px;height:${rhpx}px`;
       const num=document.createElement('span');
       num.className='grid-cell-num';num.textContent=n;
       cell.appendChild(num);
@@ -671,8 +688,8 @@ function _drawGrid(ov,wpx,hpx,ox,oy,gapX,gapY,wMM,hMM){
     }
   }
   const lbl=document.createElement('div');
-  lbl.style.cssText='position:absolute;bottom:4px;right:6px;font-size:9px;font-weight:700;color:#fff;font-family:monospace;background:rgba(77,144,254,.75);padding:2px 6px;border-radius:3px';
-  lbl.textContent=`${cols}×${rows} = ${total} etiquetas (${Math.round(wMM)}×${Math.round(hMM)}mm · gap ${Math.round(PX2MM(gapX))}×${Math.round(PX2MM(gapY))}mm)`;
+  lbl.style.cssText='position:absolute;bottom:4px;right:6px;font-size:9px;font-weight:700;color:#fff;font-family:monospace;background:rgba(77,144,254,.75);padding:2px 6px;border-radius:3px;pointer-events:none';
+  lbl.textContent=`${cols}×${rows} = ${total} (${Math.round(wMM)}×${Math.round(hMM)}mm)`;
   ov.appendChild(lbl);
 }
 
@@ -1287,7 +1304,7 @@ function getCfg(){
   };
 }
 function autoSave(){try{localStorage.setItem('etiq_v25_auto',JSON.stringify(getCfg()));}catch(e){}}
-function liveUp(){if(sel===null)return;const t=tags.find(t=>t.id===sel);if(!t)return;Object.assign(t,getCfg());applyStyle(t);autoSave();if(gridOn&&t===tags[0]){_updateGridRef();renderGrid();}}
+function liveUp(){if(sel===null)return;const t=tags.find(t=>t.id===sel);if(!t)return;Object.assign(t,getCfg());applyStyle(t);autoSave();if(gridOn){_updateGridRef();renderGrid();}}
 
 function getSnap(id,x,y,wp,hp){const xC=[0,SW-wp,SW/2-wp/2],yC=[0,SH-hp,SH/2-hp/2];tags.forEach(t=>{if(t.id===id)return;const tw=t.wMM*MM*SC,th=t.hMM*MM*SC;xC.push(t.x,t.x+tw,t.x-wp,t.x+tw-wp);yC.push(t.y,t.y+th,t.y-hp,t.y+th-hp);});let bx=x,by=y,dx=SNAP+1,dy=SNAP+1;xC.forEach(cx=>{const d=Math.abs(x-cx);if(d<dx){dx=d;bx=cx;}});yC.forEach(cy=>{const d=Math.abs(y-cy);if(d<dy){dy=d;by=cy;}});return{x:dx<=SNAP?bx:x,y:dy<=SNAP?by:y,gx:dx<=SNAP?bx:null,gy:dy<=SNAP?by:null};}
 function showGuides(gx,gy){const sv=G('sgv2'),sh2=G('sgh2');if(gx!==null){sv.style.left=gx+'px';sv.classList.add('on');}else sv.classList.remove('on');if(gy!==null){sh2.style.top=gy+'px';sh2.classList.add('on');}else sh2.classList.remove('on');}
@@ -1742,9 +1759,9 @@ document.addEventListener('mousemove',e=>{
     const dx=mx-drag.mx0,dy=my-drag.my0;
     drag.snap.forEach(({id,x0,y0})=>{const t=tags.find(t=>t.id===id);if(!t)return;const el2=document.getElementById('te'+id);if(!el2)return;const wp=t.wMM*MM*SC,hp=t.hMM*MM*SC;let nx=Math.max(0,Math.min(x0+dx,SW-wp)),ny=Math.max(0,Math.min(y0+dy,SH-hp));if(id===drag.id){const sn=getSnap(id,nx,ny,wp,hp);t.x=sn.x;t.y=sn.y;showGuides(sn.gx,sn.gy);}else{t.x=nx;t.y=ny;}el2.style.left=t.x+'px';el2.style.top=t.y+'px';});return;
   }
-  if(rsz){const tag=tags.find(t=>t.id===rsz.id);if(!tag)return;const rect=sheet.getBoundingClientRect(),mx=(e.clientX-rect.left)/zoom,my=(e.clientY-rect.top)/zoom;const ddx=(mx-rsz.mx0)/MM,ddy=(my-rsz.my0)/MM,d=rsz.dir;let nw=rsz.w0,nh=rsz.h0,nx=rsz.x0,ny=rsz.y0;if(d.includes('e'))nw=Math.max(20,rsz.w0+ddx);if(d.includes('s'))nh=Math.max(15,rsz.h0+ddy);if(d.includes('w')){nw=Math.max(20,rsz.w0-ddx);nx=rsz.x0+(rsz.w0-nw)*MM*SC;}if(d.includes('n')){nh=Math.max(15,rsz.h0-ddy);ny=rsz.y0+(rsz.h0-nh)*MM*SC;}tag.wMM=nw;tag.hMM=nh;tag.x=nx;tag.y=ny;const fw=G('f-w'),fh=G('f-h');if(fw){fw.value=Math.round(nw);G('q-w').value=Math.round(nw);}if(fh){fh.value=Math.round(nh);G('q-h').value=Math.round(nh);}G('sum-size').textContent=Math.round(nw)+' × '+Math.round(nh)+' mm';updPrevSize();applyStyle(tag);if(gridOn&&tag===tags[0]){_updateGridRef();renderGrid();}}
+  if(rsz){const tag=tags.find(t=>t.id===rsz.id);if(!tag)return;const rect=sheet.getBoundingClientRect(),mx=(e.clientX-rect.left)/zoom,my=(e.clientY-rect.top)/zoom;const ddx=(mx-rsz.mx0)/MM,ddy=(my-rsz.my0)/MM,d=rsz.dir;let nw=rsz.w0,nh=rsz.h0,nx=rsz.x0,ny=rsz.y0;if(d.includes('e'))nw=Math.max(20,rsz.w0+ddx);if(d.includes('s'))nh=Math.max(15,rsz.h0+ddy);if(d.includes('w')){nw=Math.max(20,rsz.w0-ddx);nx=rsz.x0+(rsz.w0-nw)*MM*SC;}if(d.includes('n')){nh=Math.max(15,rsz.h0-ddy);ny=rsz.y0+(rsz.h0-nh)*MM*SC;}tag.wMM=nw;tag.hMM=nh;tag.x=nx;tag.y=ny;const fw=G('f-w'),fh=G('f-h');if(fw){fw.value=Math.round(nw);G('q-w').value=Math.round(nw);}if(fh){fh.value=Math.round(nh);G('q-h').value=Math.round(nh);}G('sum-size').textContent=Math.round(nw)+' × '+Math.round(nh)+' mm';updPrevSize();applyStyle(tag);if(gridOn){_updateGridRef();renderGrid();}}
 });
-document.addEventListener('mouseup',()=>{const wasRsz=rsz;drag=null;rsz=null;hideGuides();if(gridOn){if(wasRsz&&tags.find(t=>t.id===wasRsz.id)===tags[0]){_updateGridRef();}renderGrid();}});
+document.addEventListener('mouseup',()=>{drag=null;rsz=null;hideGuides();if(gridOn){_updateGridRef();renderGrid();}});
 sheet.addEventListener('click',e=>{if(e.target===sheet){sel=null;selSet.clear();upSelVis();}});
 
 function applyTpl(i){saveUndo();const tpl=TPLS[i];set2('c-bg','c-bg-t',tpl.bg);set2('c-tx','c-tx-t',tpl.tx);set2('c-pr','c-pr-t',tpl.pr);set2('c-bd','c-bd-t',tpl.bd);set2('c-sbg','c-sbg-t',tpl.sBg);set2('c-stx','c-stx-t',tpl.sTx);['s-bw','s-pd','f-font','s-d','s-p','s-u','s-store'].forEach((id,j)=>{const el=G(id);if(el)el.value=[tpl.bw,tpl.pd,tpl.font,tpl.szD,tpl.szP,tpl.szU,tpl.szS][j];});[['v-bw',tpl.bw+'px'],['v-pd',tpl.pd+'px'],['v-d',tpl.szD+'pt'],['v-p',tpl.szP+'pt'],['v-u',tpl.szU+'pt'],['v-st',tpl.szS+'pt']].forEach(([id,v])=>{const el=G(id);if(el)el.textContent=v;});reSum();updP();liveUp();st('Template "'+tpl.n+'" aplicado','ok');}
