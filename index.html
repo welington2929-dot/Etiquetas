@@ -73,6 +73,9 @@ body{font-family:Arial,sans-serif;font-size:13px;display:flex;flex-direction:col
 .qopts{display:flex;gap:6px;flex-wrap:wrap}
 .qopt{display:flex;align-items:center;gap:5px;padding:5px 9px;border:1px solid var(--id);border-radius:6px;background:var(--ib);cursor:pointer;font-size:11px;color:var(--tx3);user-select:none}
 .qopt.on{background:var(--acd);border-color:var(--ac);color:var(--ac);font-weight:700}
+.upill{padding:3px 9px;font-size:11px;font-weight:700;border:1px solid var(--id);border-radius:20px;background:var(--ib);color:var(--tx3);cursor:pointer;font-family:Arial;transition:background .12s,color .12s,border-color .12s;white-space:nowrap}
+.upill:hover{background:var(--bg3)}
+.upill.on{background:var(--acd);border-color:var(--ac);color:var(--ac)}
 .qszr{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--cbg);border:1px solid var(--cbd);border-radius:8px}
 .qszl{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap}
 .qszi{display:flex;align-items:center;gap:5px;flex:1}
@@ -274,7 +277,7 @@ input[type=color]{width:32px;height:29px;padding:2px;border:1px solid var(--id);
   <!-- Linha 2: selecionar arquivo (só modo local) -->
   <div id="bc-local-row" style="display:flex;flex-direction:column;gap:4px;padding:6px 10px;border-bottom:1px solid var(--sep)">
     <div style="display:flex;gap:5px;align-items:center">
-      <label style="position:relative;display:flex;align-items:center;gap:5px;padding:5px 8px;border:1px dashed var(--bd1);border-radius:6px;cursor:pointer;color:var(--tx3);font-size:10px;font-weight:700;flex:1;min-width:0">
+      <label style="position:relative;display:flex;align-items:center;gap:5px;padding:5px 8px;border:1px dashed var(--bd1);border-radius:6px;cursor:pointer;color:var(--tx3);font-size:10px;font-weight:700;flex:1;min-width:0" onclick="if(window.showOpenFilePicker){event.preventDefault();selectPriceTabFile();}">
         📂 <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="bc-file-name">Selecionar PRICETAB.TXT</span>
         <input type="file" accept=".txt,.TXT" id="bc-local-file" style="position:absolute;inset:0;opacity:0;cursor:pointer" onchange="loadPriceTab(this)">
       </label>
@@ -312,7 +315,7 @@ input[type=color]{width:32px;height:29px;padding:2px;border:1px solid var(--id);
 <!-- NOME DO PRODUTO -->
 <div class="qf">
 <label>📝 Nome do produto <span id="bc-via-tag" style="display:none;font-size:9px;font-weight:700;color:#4ade80;margin-left:4px;background:#0a1c0e;padding:1px 6px;border-radius:3px;border:1px solid #16a34a">via código</span></label>
-<textarea id="q-desc" style="height:44px" oninput="const _s=this.selectionStart,_e=this.selectionEnd,_nv=applyDescCase(this.value);if(_nv!==this.value){this.value=_nv;this.setSelectionRange(_s,_e);}syncQD();G('bc-via-tag').style.display='none';liveUp()" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();G('q-price').focus();G('q-price').select()}">Arroz Tipo 1 5kg</textarea>
+<textarea id="q-desc" style="height:72px;line-height:1.5;word-break:break-word;overflow-wrap:break-word;white-space:pre-wrap;overflow-y:auto" oninput="const _s=this.selectionStart,_e=this.selectionEnd,_nv=applyDescCase(this.value);if(_nv!==this.value){this.value=_nv;this.setSelectionRange(_s,_e);}syncQD();G('bc-via-tag').style.display='none';liveUp()" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();G('q-price').focus();G('q-price').select()}">Arroz Tipo 1 5kg</textarea>
 <div style="display:flex;gap:5px;margin-top:4px"><button class="qopt" id="qbtn-dtitle" style="flex:1;justify-content:center;font-size:11px;font-weight:700" onclick="tFmt('d','title')">Aa</button><button class="qopt" id="qbtn-dupper" style="flex:1;justify-content:center;font-size:11px;font-weight:700" onclick="tFmt('d','upper')">AA</button></div>
 </div>
 
@@ -323,7 +326,16 @@ input[type=color]{width:32px;height:29px;padding:2px;border:1px solid var(--id);
 <input type="text" id="q-price" class="pb2" value="8,99" oninput="syncQP();liveUp()"
 onkeydown="if(event.key==='Enter'){event.preventDefault();addTag();setTimeout(()=>{if(G('tog-bc-srch').checked){resetBC();G('bc-in').focus();}else{G('q-desc').focus();G('q-desc').select();}},80)}">
 </div>
-<div class="qf"><label>Unidade</label><input type="text" id="q-unit" value="kg" oninput="syncQU();liveUp()"></div>
+<div class="qf"><label>Unidade</label><input type="text" id="q-unit" value="kg" oninput="syncQU();updUnitPills();liveUp()"></div>
+</div>
+<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">
+<button class="upill" onclick="setUnit('un')">un</button>
+<button class="upill" onclick="setUnit('kg')">kg</button>
+<button class="upill" onclick="setUnit('g')">g</button>
+<button class="upill" onclick="setUnit('L')">L</button>
+<button class="upill" onclick="setUnit('ml')">ml</button>
+<button class="upill" onclick="setUnit('cx')">cx</button>
+<button class="upill" onclick="setUnit('pc')">pc</button>
 </div>
 
 <!-- OPÇÕES -->
@@ -525,7 +537,7 @@ onkeydown="if(event.key==='Enter'){event.preventDefault();addTag();setTimeout(()
 <div class="aw"><button class="addb" onclick="addTag()">+ Adicionar etiqueta à folha</button></div>
 </div>
 
-<div class="pnl" id="p-lista"><div style="padding:10px;flex:1;overflow-y:auto"><div style="font-size:10px;color:var(--tx4);background:var(--cbg);border:1px solid var(--cbd);border-radius:6px;padding:7px 10px;margin-bottom:8px;line-height:1.6">💡 Clique em uma etiqueta da lista para selecioná-la e editar.</div><div id="tag-list"><div style="color:var(--tx4);font-size:12px;text-align:center;padding:30px 0">Nenhuma etiqueta ainda.</div></div></div></div>
+<div class="pnl" id="p-lista"><div style="padding:10px;flex:1;overflow-y:auto"><div style="font-size:10px;color:var(--tx4);background:var(--cbg);border:1px solid var(--cbd);border-radius:6px;padding:7px 10px;margin-bottom:8px;line-height:1.6">💡 Clique em uma etiqueta da lista para selecioná-la e editar.</div><div id="tag-list"><div style="color:var(--tx4);font-size:12px;text-align:center;padding:30px 0">Nenhuma etiqueta ainda.</div></div><div id="lista-actions" style="display:none;margin-top:8px;flex-direction:column;gap:6px"><button class="btn btno" onclick="keepFirst()" id="btn-keepfirst">📌 Manter apenas a 1ª etiqueta</button><button class="btn btnr" onclick="clearAll()">🗑 Limpar tudo</button></div></div></div>
 
 <div class="pnl" id="p-exp"><div style="padding:10px;flex:1;overflow-y:auto">
 <div class="card" id="c-print"><div class="cah" onclick="tcard('c-print')"><span class="cai">🖨️</span><div class="cam"><div class="cat">Imprimir e exportar</div><div class="cas">Imprimir, PDF, PNG ou HTML</div></div><div class="car"><span class="caa">▾</span></div></div>
@@ -634,9 +646,17 @@ let gridOn=false;
 let _gridRef=null;
 
 function _updateGridRef(){
-  const t=tags[0];
+  const anchor=tags[0];
+  const t=tags.find(t=>t.id===sel)||anchor;
   if(!t)return;
-  _gridRef={wMM:t.wMM, hMM:t.hMM, x:t.x, y:t.y, gapX:10, gapY:10};
+  _gridRef={
+    wMM: t.wMM,
+    hMM: t.hMM,
+    x: anchor ? anchor.x : 10,
+    y: anchor ? anchor.y : 10,
+    gapX: 10,
+    gapY: 10
+  };
 }
 
 function toggleGrid(){
@@ -644,6 +664,12 @@ function toggleGrid(){
   const btn=G('btn-grid');
   if(btn)btn.classList.toggle('on',gridOn);
   if(gridOn){_updateGridRef();renderGrid();}else clearGrid();
+}
+
+function clearGrid(){
+  const ov=G('grid-overlay');if(!ov)return;
+  ov.innerHTML='';
+  ov.style.display='none';
 }
 
 function renderGrid(){
@@ -989,18 +1015,45 @@ function parsePriceTab(text){
 
 // ── PRICETAB ──────────────────────────────────────────
 let _lastPriceTabFile=null;
+let _lastPriceTabHandle=null;
 
 function loadPriceTab(input){
   const file=input.files[0];if(!file)return;
   _lastPriceTabFile=file;
+  _lastPriceTabHandle=null;
   const nameEl=G('bc-file-name');if(nameEl)nameEl.textContent=file.name;
   const btn=G('bc-refresh-btn');if(btn){btn.style.opacity='1';btn.style.pointerEvents='';}
   _readPriceTabFile(file);
 }
 
-function reloadPriceTab(){
+async function selectPriceTabFile(){
+  try{
+    const [handle]=await window.showOpenFilePicker({types:[{description:'Arquivo de texto',accept:{'text/plain':['.txt','.TXT']}}],multiple:false});
+    _lastPriceTabHandle=handle;
+    const file=await handle.getFile();
+    _lastPriceTabFile=file;
+    const nameEl=G('bc-file-name');if(nameEl)nameEl.textContent=file.name;
+    const btn=G('bc-refresh-btn');if(btn){btn.style.opacity='1';btn.style.pointerEvents='';}
+    _readPriceTabFile(file);
+  }catch(err){
+    if(err.name!=='AbortError')st('Erro ao abrir arquivo','err');
+  }
+}
+
+async function reloadPriceTab(){
+  if(_lastPriceTabHandle){
+    st('Recarregando…');
+    try{
+      const file=await _lastPriceTabHandle.getFile();
+      _lastPriceTabFile=file;
+      _readPriceTabFile(file);
+    }catch(err){
+      st('Erro ao recarregar arquivo','err');
+    }
+    return;
+  }
   if(!_lastPriceTabFile){st('Nenhum arquivo carregado','err');return;}
-  st('Recarregando…');
+  st('Recarregando… (arquivo pode não refletir mudanças)');
   _readPriceTabFile(_lastPriceTabFile);
 }
 
@@ -1146,6 +1199,8 @@ function tqopt(k){qOpts[k]=!qOpts[k];G('qopt-'+k)?.classList.toggle('on',qOpts[k
 function syncQD(){G('f-desc').value=G('q-desc').value;reSum();}
 function syncQP(){G('f-price').value=G('q-price').value;reSum();}
 function syncQU(){G('f-unit').value=G('q-unit').value;}
+function setUnit(v){const el=G('q-unit');el.value=v;syncQU();updUnitPills();liveUp();}
+function updUnitPills(){const v=(G('q-unit').value||'').trim();document.querySelectorAll('.upill').forEach(b=>{b.classList.toggle('on',b.textContent===v);});}
 function syncQL(){G('f-old').value=G('q-old').value;G('f-oldpfx').value=V('q-opfx');}
 function syncQB(){const bv=V('q-bsel');G('q-bcus-wrap').style.display=bv==='__cus'?'block':'none';G('f-badge').value=bv;if(bv==='__cus'){G('f-badcus').value=V('q-bcus');G('body-badcus').style.display='block';}else G('body-badcus').style.display='none';reSum();updP();}
 function syncQW(){G('f-w').value=G('q-w').value;reSum();updP();}
@@ -1663,7 +1718,7 @@ function buildPrice(tag){
   return`<div style="display:flex;align-items:baseline;justify-content:${jmap[tag.alnP]};overflow:hidden;flex-shrink:0;font-family:${tag.font}">${inner}</div>`;
 }
 
-function doSel(id){sel=id;upSelVis();const t=tags.find(t=>t.id===id);if(t)fillForm(t);}
+function doSel(id){sel=id;upSelVis();const t=tags.find(t=>t.id===id);if(t)fillForm(t);if(gridOn){_updateGridRef();renderGrid();}}
 function fillForm(t){
   const sv=(id,v)=>{if(v!=null&&G(id))G(id).value=v;};
   sv('f-desc',t.desc);sv('q-desc',t.desc);sv('f-price',t.price);sv('q-price',t.price);
@@ -1752,6 +1807,7 @@ function fillForm(t){
 function delTag(id){saveUndo();tags=tags.filter(t=>t.id!==id);document.getElementById('te'+id)?.remove();if(sel===id){sel=null;selSet.delete(id);}selSet.delete(id);upCount();renderList();st('Excluída');}
 function dupTag(id){saveUndo();const t=tags.find(t=>t.id===id);if(!t)return;const pos=findPos(t.wMM*MM*SC,t.hMM*MM*SC);const copy={...t,fmtD:{...t.fmtD},fmtP:{...t.fmtP},fmtCS:{...t.fmtCS},id:nid++,x:pos.x,y:pos.y};tags.push(copy);buildEl(copy);selSet.clear();selSet.add(copy.id);doSel(copy.id);upCount();renderList();st('Duplicada','ok');}
 function clearAll(){if(!tags.length)return;if(!confirm('Limpar tudo?'))return;saveUndo();tags.forEach(t=>document.getElementById('te'+t.id)?.remove());tags=[];sel=null;selSet.clear();upCount();renderList();st('Folha limpa');}
+function keepFirst(){if(tags.length<=1)return;if(!confirm('Manter apenas a 1ª etiqueta e remover o restante?'))return;saveUndo();const first=tags[0];tags.slice(1).forEach(t=>document.getElementById('te'+t.id)?.remove());tags=[first];if(sel!==first.id){sel=first.id;selSet.clear();selSet.add(first.id);}upCount();renderList();st('Mantida apenas a 1ª etiqueta','ok');}
 
 document.addEventListener('mousemove',e=>{
   if(drag){
@@ -1767,7 +1823,7 @@ sheet.addEventListener('click',e=>{if(e.target===sheet){sel=null;selSet.clear();
 function applyTpl(i){saveUndo();const tpl=TPLS[i];set2('c-bg','c-bg-t',tpl.bg);set2('c-tx','c-tx-t',tpl.tx);set2('c-pr','c-pr-t',tpl.pr);set2('c-bd','c-bd-t',tpl.bd);set2('c-sbg','c-sbg-t',tpl.sBg);set2('c-stx','c-stx-t',tpl.sTx);['s-bw','s-pd','f-font','s-d','s-p','s-u','s-store'].forEach((id,j)=>{const el=G(id);if(el)el.value=[tpl.bw,tpl.pd,tpl.font,tpl.szD,tpl.szP,tpl.szU,tpl.szS][j];});[['v-bw',tpl.bw+'px'],['v-pd',tpl.pd+'px'],['v-d',tpl.szD+'pt'],['v-p',tpl.szP+'pt'],['v-u',tpl.szU+'pt'],['v-st',tpl.szS+'pt']].forEach(([id,v])=>{const el=G(id);if(el)el.textContent=v;});reSum();updP();liveUp();st('Template "'+tpl.n+'" aplicado','ok');}
 function copyStyleAll(){if(sel===null){st('Selecione uma etiqueta');return;}saveUndo();const src=tags.find(t=>t.id===sel);if(!src)return;const keys=['bg','tx','pr','bd','bw','pd','font','szD','szP','szU','alnD','alnP','sBg','sTx','szStore','badgeColor','fmtD','fmtP','fmtCS','storeAln','storeH','bodyGap','csSzRatio','pLS','csLS','csPos','csColor','csGap','unitPos','dLS'];tags.forEach(t=>{if(t.id===sel)return;keys.forEach(k=>{if(src[k]!==undefined)t[k]=typeof src[k]==='object'?{...src[k]}:src[k];});applyStyle(t);});st('Estilo copiado para todas','ok');}
 function autoGrid(){if(!tags.length)return;saveUndo();const m=5*MM*SC,gp=3*MM*SC;let cx=m,cy=m,rowH=0;tags.forEach(t=>{const tw=t.wMM*MM*SC,th=t.hMM*MM*SC;if(cx>m&&cx+tw>SW-m){cx=m;cy+=rowH+gp;rowH=0;}t.x=cx;t.y=cy;cx+=tw+gp;rowH=Math.max(rowH,th);applyStyle(t);});st('Grade distribuída','ok');}
-function renderList(){const c=G('tag-list');if(!tags.length){c.innerHTML='<div style="color:var(--tx4);font-size:12px;text-align:center;padding:30px 0">Nenhuma etiqueta ainda.</div>';return;}c.innerHTML='';tags.forEach(t=>{const d=document.createElement('div');d.className='li'+(t.id===sel?' on':'');d.innerHTML=`<div class="lis" style="background:${t.bg};border-color:${t.bd};color:${t.pr};font-family:${t.font}">${t.showStore?`<div style="width:100%;height:5px;background:${t.sBg}"></div>`:''}<span>R$</span></div><div class="lii"><div class="lin">${t.desc}</div><div class="lib">R$ ${t.price}${t.showUnit?' /'+t.unit:''} · ${Math.round(t.wMM)}×${Math.round(t.hMM)}mm${t.showBarcode&&t.barcodeVal?' · 📊':''}</div></div><div class="lia"><button class="mbtn" onclick="event.stopPropagation();dupTag(${t.id})">Dup</button><button class="mbtn mbtnd" onclick="event.stopPropagation();delTag(${t.id})">✕</button></div>`;d.onclick=()=>{selSet.clear();selSet.add(t.id);doSel(t.id);goTab('quick',E('.tab:nth-child(1)'));};c.appendChild(d);});}
+function renderList(){const c=G('tag-list');const acts=G('lista-actions');if(!tags.length){c.innerHTML='<div style="color:var(--tx4);font-size:12px;text-align:center;padding:30px 0">Nenhuma etiqueta ainda.</div>';if(acts)acts.style.display='none';return;}if(acts){acts.style.display='flex';const kf=G('btn-keepfirst');if(kf)kf.style.display=tags.length>1?'':'none';}c.innerHTML='';tags.forEach(t=>{const d=document.createElement('div');d.className='li'+(t.id===sel?' on':'');d.innerHTML=`<div class="lis" style="background:${t.bg};border-color:${t.bd};color:${t.pr};font-family:${t.font}">${t.showStore?`<div style="width:100%;height:5px;background:${t.sBg}"></div>`:''}<span>R$</span></div><div class="lii"><div class="lin">${t.desc}</div><div class="lib">R$ ${t.price}${t.showUnit?' /'+t.unit:''} · ${Math.round(t.wMM)}×${Math.round(t.hMM)}mm${t.showBarcode&&t.barcodeVal?' · 📊':''}</div></div><div class="lia"><button class="mbtn" onclick="event.stopPropagation();dupTag(${t.id})">Dup</button><button class="mbtn mbtnd" onclick="event.stopPropagation();delTag(${t.id})">✕</button></div>`;d.onclick=()=>{selSet.clear();selSet.add(t.id);doSel(t.id);goTab('quick',E('.tab:nth-child(1)'));};c.appendChild(d);});}
 function upCount(){const n=tags.length;G('cnt').textContent=n+' etiqueta'+(n!==1?'s':'')+(selSet.size>1?' ('+selSet.size+' sel.)':'');}
 
 function saveConf(){try{localStorage.setItem('etiq_v25',JSON.stringify(getCfg()));st('Configurações salvas!','ok');}catch(e){st('Erro','err');}}
@@ -1851,7 +1907,7 @@ function applyConf(c){
   qOpts.old=!!c.showOld;qOpts.badge=!!c.showBadge;qOpts.unit=!!c.showUnit;
   ['old','badge','unit'].forEach(k=>G('qopt-'+k)?.classList.toggle('on',qOpts[k]));
   G('q-old-wrap').style.display=qOpts.old?'block':'none';G('q-badge-wrap').style.display=qOpts.badge?'block':'none';
-  reSum();updP();
+  reSum();updP();updUnitPills();
 }
 function exportConfJSON(){const cfg=getCfg();cfg.logoB64='';const blob=new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='config_etiqueta.json';a.click();st('Exportado!');}
 function importConfJSON(inp){if(!inp.files||!inp.files[0])return;const r=new FileReader();r.onload=e=>{try{applyConf(JSON.parse(e.target.result));st('Importado!','ok');}catch(e){st('Arquivo inválido','err');}};r.readAsText(inp.files[0]);inp.value='';}
@@ -2210,7 +2266,7 @@ const PRESETS={
   cosmosLoad();
   gistLoadCfg();
   try{ applyConf(DEFAULT_CFG); }catch(e){}
-  reSum();updP();renderProjList();renderPresets();
+  reSum();updP();renderProjList();renderPresets();updUnitPills();
   addTag();
   document.querySelectorAll('.tab').forEach((b,i)=>{b.onclick=function(){goTab(['quick','cfg','lista','exp'][i],this);};});
   // Auto-receber projetos do Gist ao abrir
