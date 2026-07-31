@@ -10,10 +10,10 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;margin:0;padding:0;overflow:hidden}
-body{font-family:Arial,sans-serif;font-size:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg1,#111);min-height:100vh;box-sizing:border-box}
+body{font-family:Arial,sans-serif;font-size:13px;display:flex;flex-direction:column;background:var(--bg1,#111);box-sizing:border-box;height:100vh;height:100dvh}
 :root{--bg1:#111;--bg2:#181818;--bg3:#1a1a1a;--bg4:#242424;--bd1:#2e2e2e;--bd2:#444;--tx1:#f2f2f2;--tx2:#dedede;--tx3:#b8b8b8;--tx4:#888;--pvbg:#161616;--sep:#222;--cbg:#141414;--cbd:#262626;--co:#0f0f0f;--ac:#4d90fe;--acd:#0d2a5e;--sw:#333;--th:#666;--ib:#1e1e1e;--id:#333}
 .light{--bg1:#f0f0f0;--bg2:#fff;--bg3:#e8e8e8;--bg4:#dcdcdc;--bd1:#c4c4c4;--bd2:#aaa;--tx1:#111;--tx2:#222;--tx3:#444;--tx4:#666;--pvbg:#d4d4d4;--sep:#d8d8d8;--cbg:#e6e6e6;--cbd:#ccc;--co:#fff;--acd:#c9dafe;--sw:#bbb;--th:#999;--ib:#fff;--id:#bbb}
-.app{display:flex;height:min(790px,100vh);width:min(1280px,100vw);border-radius:10px;overflow:hidden;border:1px solid var(--bd1);position:relative}
+.app{display:flex;height:100vh;height:100dvh;width:100vw;overflow:hidden;border:none;position:relative}
 .sb{width:316px;min-width:316px;background:var(--bg1);display:flex;flex-direction:column;overflow:hidden}
 .topbar{display:flex;background:#000;border-bottom:1px solid var(--bd1);flex-shrink:0;align-items:stretch}
 .light .topbar{background:var(--bg2)}
@@ -246,6 +246,37 @@ input[type=color]{width:32px;height:29px;padding:2px;border:1px solid var(--id);
 .grid-cell-num{position:absolute;top:3px;left:4px;font-size:9px;font-weight:700;color:#fff;font-family:monospace;line-height:1;background:rgba(77,144,254,.75);padding:1px 4px;border-radius:3px}
 .grid-cell.filled{border-color:rgba(74,222,128,.5)}
 .pvbtn.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+/* ── MODO TÉRMICA ─────────────────────────── */
+.therm-wrap{flex:1;display:none;flex-direction:column;overflow:hidden;background:var(--pvbg);}
+.therm-wrap.on{display:flex;}
+.mode-btn{padding:3px 10px;font-size:10px;font-weight:700;border:1px solid var(--bd1);border-radius:4px;background:var(--bg3);color:var(--tx3);cursor:pointer;white-space:nowrap;transition:.15s;font-family:Arial;}
+.mode-btn.on{background:var(--ac);color:#fff;border-color:var(--ac);}
+/* Thermal controls bar */
+.therm-ctrl{flex-shrink:0;background:var(--cbg);border-bottom:1px solid var(--cbd);padding:8px 10px;display:flex;flex-direction:column;gap:6px;}
+.therm-ctrl-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;}
+.therm-ctrl-lbl{font-size:9px;color:var(--tx3);white-space:nowrap;font-weight:700;}
+.therm-ctrl-inp{font-size:10px;padding:2px 4px;border:1px solid var(--bd1);border-radius:3px;background:var(--bg3);color:var(--tx1);height:22px;}
+.therm-ctrl-inp[type=range]{height:16px;padding:0;width:72px;accent-color:var(--ac);}
+.therm-ctrl-scval{font-size:9px;color:var(--tx2);min-width:30px;font-weight:700;}
+.therm-ctrl-sep{border-left:1px solid var(--bd1);height:14px;margin:0 2px;}
+/* Thermal scroll / paper roll */
+.therm-scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:16px 10px 24px;gap:0;background:var(--pvbg);}
+.therm-roll{display:flex;flex-direction:column;align-items:center;gap:0;}
+.therm-label-wrap{display:flex;flex-direction:column;align-items:center;}
+.therm-cut-line{width:100%;display:flex;align-items:center;gap:6px;margin:4px 0;flex-shrink:0;}
+.therm-cut-line::before,.therm-cut-line::after{content:'';flex:1;border-top:1px dashed var(--tx4);}
+.therm-cut-txt{font-size:7px;color:var(--tx4);white-space:nowrap;}
+.therm-paper-bg{background:#fff;box-shadow:0 3px 18px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;}
+.therm-empty{padding:40px 20px;text-align:center;color:var(--tx3);font-size:12px;line-height:1.7;}
+.therm-info-bar{font-size:9px;color:var(--tx4);background:var(--cbg);border:1px solid var(--cbd);border-radius:6px;padding:4px 10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;margin-top:10px;flex-shrink:0;}
+.therm-preset-ok{font-size:9px;color:#16a34a;font-weight:700;display:none;}
+/* Thermal named presets row */
+.therm-pname-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 10px;background:var(--bg4);border-top:1px solid var(--bd1);border-bottom:1px solid var(--bd1);}
+.therm-pname-row select{font-size:10px;padding:2px 4px;border:1px solid var(--bd1);border-radius:3px;background:var(--bg3);color:var(--tx1);height:22px;max-width:160px;flex:1;}
+.therm-pname-row input[type=text]{font-size:10px;padding:2px 6px;border:1px solid var(--bd1);border-radius:3px;background:var(--ib);color:var(--tx1);height:22px;flex:1;max-width:140px;}
+.therm-pname-row label{font-size:9px;color:var(--tx3);font-weight:700;white-space:nowrap;}
+.therm-preset-del{color:#f87171;border-color:#7f1d1d!important;}
+
 </style>
 
 <div class="app" id="app">
@@ -549,6 +580,18 @@ onkeydown="if(event.key==='Enter'){event.preventDefault();addTag();setTimeout(()
 <button class="btn" onclick="exportWord()" style="color:#2563eb;border-color:#2563eb">⬇ Baixar Word (.doc)</button>
 <div class="fld" style="margin-top:4px"><label class="lbl">Qualidade da imagem PNG</label><select id="f-pngscale"><option value="1">Normal (1×)</option><option value="2" selected>Alta qualidade (2×) — recomendado</option><option value="3">Máxima (3×)</option></select></div>
 </div></div>
+<div class="card" id="c-thermal"><div class="cah" onclick="tcard('c-thermal')"><span class="cai">🖨️</span><div class="cam"><div class="cat">Impressão Térmica</div><div class="cas">Bematech MP-4200, 80mm e similares</div></div><div class="car"><span class="caa">▾</span></div></div>
+<div class="cab">
+<div class="tip"><b>Impressora Térmica</b><br>Clique em <b>🖨 Térmica</b> na barra do preview para ver e editar todas as etiquetas no formato térmico. Lá você pode ajustar tamanhos de fonte, padding e salvar como predefinição.</div>
+<div class="eg" style="margin-bottom:8px">
+<button class="btn" onclick="thermPreset(80,50)" style="font-size:10px;padding:5px">80×50mm<br><span style="font-size:9px;color:var(--tx3)">Padrão MP-4200</span></button>
+<button class="btn" onclick="thermPreset(80,40)" style="font-size:10px;padding:5px">80×40mm<br><span style="font-size:9px;color:var(--tx3)">Compacta</span></button>
+<button class="btn" onclick="thermPreset(58,40)" style="font-size:10px;padding:5px">58×40mm<br><span style="font-size:9px;color:var(--tx3)">Mini 58mm</span></button>
+<button class="btn" onclick="thermPreset(80,70)" style="font-size:10px;padding:5px">80×70mm<br><span style="font-size:9px;color:var(--tx3)">Alta</span></button>
+</div>
+<div class="sep"></div>
+<button class="btn" onclick="setViewMode('therm')" style="font-size:14px!important;padding:12px!important;font-weight:700!important">🖨 Abrir modo Térmica</button>
+</div></div>
 <div class="card" id="c-proj"><div class="cah" onclick="tcard('c-proj')"><span class="cai">📁</span><div class="cam"><div class="cat">Projetos salvos</div><div class="cas" id="sum-proj">Nenhum projeto</div></div><div class="car"><span class="caa">▾</span></div></div>
 <div class="cab"><div class="pnr"><input type="text" id="proj-name" placeholder="Nome do projeto..."><button class="btn btnb" style="width:auto;padding:6px 12px;margin:0;white-space:nowrap" onclick="saveProject()">💾 Salvar</button></div><div class="plist" id="proj-list"></div><div class="r2"><button class="btn btno" onclick="exportProjectJSON()">⬇ Exportar arquivo</button><button class="btn" style="position:relative;overflow:hidden">📁 Importar arquivo<input type="file" accept=".json" onchange="importProjectJSON(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></button></div></div></div>
 
@@ -607,10 +650,90 @@ onkeydown="if(event.key==='Enter'){event.preventDefault();addTag();setTimeout(()
 <span id="cnt" style="color:var(--tx3);font-size:10px">0 etiquetas</span>
 <span style="color:var(--tx4)">|</span>
 <div class="zctrl"><span style="font-size:9px;color:var(--tx4)">🔍</span><input type="range" id="zoom-sl" min="30" max="180" value="100" step="5" oninput="setZoom(this.value)"><span id="zoom-val" style="font-size:10px;color:var(--tx3);white-space:nowrap">100%</span></div>
+<span style="color:var(--tx4)">|</span>
+<button class="mode-btn on" id="btn-mode-a4" onclick="setViewMode('a4')" title="Folha A4 — modo padrão">📄 A4</button>
+<button class="mode-btn" id="btn-mode-therm" onclick="setViewMode('therm')" title="Impressão térmica — Bematech MP-4200 e similares">🖨 Térmica</button>
 </div>
 <div id="swrap" style="position:relative;flex-shrink:0">
 <div class="a4" id="sheet"><div class="sg2" id="sgh2"></div><div class="sg2" id="sgv2"></div><div id="grid-overlay" style="position:absolute;inset:0;pointer-events:none;z-index:3;display:none"></div></div>
 </div>
+<div class="therm-wrap" id="therm-wrap">
+  <!-- ── Controles do modo térmico ── -->
+  <div class="therm-ctrl" id="therm-ctrl">
+    <div class="therm-ctrl-row">
+      <span class="therm-ctrl-lbl">📏 Papel</span>
+      <select id="therm-w" onchange="onThermChange()" class="therm-ctrl-inp" style="max-width:150px">
+        <option value="80" selected>80mm — MP-4200</option>
+        <option value="58">58mm — Compacta</option>
+        <option value="76">76mm — Especial</option>
+        <option value="custom">Personalizado…</option>
+      </select>
+      <input type="number" id="therm-w-custom" value="80" min="40" max="120" class="therm-ctrl-inp" style="width:62px;display:none" oninput="onThermChange()">
+      <div class="therm-ctrl-sep"></div>
+      <span class="therm-ctrl-lbl">Alt.</span>
+      <input type="number" id="therm-h" value="50" min="15" max="280" class="therm-ctrl-inp" style="width:62px" oninput="onThermChange()">
+      <span class="therm-ctrl-lbl" style="margin-left:-2px">mm</span>
+      <div class="therm-ctrl-sep"></div>
+      <span class="therm-ctrl-lbl">Margem</span>
+      <select id="therm-margin" onchange="onThermChange()" class="therm-ctrl-inp">
+        <option value="2" selected>2mm</option><option value="3">3mm</option><option value="1">1mm</option><option value="0">0mm</option>
+      </select>
+    </div>
+    <div class="therm-ctrl-row">
+      <span class="therm-ctrl-lbl">🔤 Descrição</span>
+      <input type="range" id="therm-szd" min="50" max="250" value="100" step="5" class="therm-ctrl-inp" oninput="onThermScaleChange('szDScale',this.value,'therm-szd-val')">
+      <span class="therm-ctrl-scval" id="therm-szd-val">100%</span>
+      <div class="therm-ctrl-sep"></div>
+      <span class="therm-ctrl-lbl">💰 Preço</span>
+      <input type="range" id="therm-szp" min="50" max="250" value="100" step="5" class="therm-ctrl-inp" oninput="onThermScaleChange('szPScale',this.value,'therm-szp-val')">
+      <span class="therm-ctrl-scval" id="therm-szp-val">100%</span>
+      <div class="therm-ctrl-sep"></div>
+      <span class="therm-ctrl-lbl">📦 Unidade</span>
+      <input type="range" id="therm-szu" min="50" max="250" value="100" step="5" class="therm-ctrl-inp" oninput="onThermScaleChange('szUScale',this.value,'therm-szu-val')">
+      <span class="therm-ctrl-scval" id="therm-szu-val">100%</span>
+    </div>
+    <div class="therm-ctrl-row">
+      <span class="therm-ctrl-lbl">🏪 Loja</span>
+      <input type="range" id="therm-szs" min="50" max="250" value="100" step="5" class="therm-ctrl-inp" oninput="onThermScaleChange('szSScale',this.value,'therm-szs-val')">
+      <span class="therm-ctrl-scval" id="therm-szs-val">100%</span>
+      <div class="therm-ctrl-sep"></div>
+      <span class="therm-ctrl-lbl">↔ Padding</span>
+      <input type="range" id="therm-pd" min="0" max="200" value="100" step="10" class="therm-ctrl-inp" oninput="onThermScaleChange('pdScale',this.value,'therm-pd-val')">
+      <span class="therm-ctrl-scval" id="therm-pd-val">100%</span>
+      <div class="therm-ctrl-sep"></div>
+      <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:9px;color:var(--tx2);white-space:nowrap" title="Ativa guilhotina automática entre etiquetas (só funciona em impressoras com cortador físico, ex: Bematech MP-4200 TH FI)">
+        <input type="checkbox" id="therm-autocut" checked onchange="thermPrefs.autoCut=this.checked" style="accent-color:var(--ac);width:12px;height:12px">
+        ✂ Corte automático
+      </label>
+      <div class="therm-ctrl-sep"></div>
+      <button class="mode-btn" onclick="saveThermPreset()" style="font-size:9px;padding:2px 8px">💾 Salvar padrão</button>
+      <button class="mode-btn" onclick="resetThermPreset()" style="font-size:9px;padding:2px 8px">↩ Resetar</button>
+      <span class="therm-preset-ok" id="therm-preset-ok">✓ Salvo!</span>
+      <button class="mode-btn" onclick="printThermal()" style="background:#14532d;color:#fff;border-color:#14532d;font-size:9px;padding:2px 10px;margin-left:auto">🖨 Imprimir</button>
+    </div>
+  </div>
+  <!-- ── Presets nomeados ── -->
+  <div class="therm-pname-row">
+    <label>📋 Preset:</label>
+    <select id="therm-named-sel" onchange="thermNamedLoad(this.value)" style="flex:2;max-width:180px">
+      <option value="">— Selecionar preset —</option>
+    </select>
+    <input type="text" id="therm-named-name" placeholder="Nome do preset…" style="flex:2;max-width:160px">
+    <button class="mode-btn" onclick="thermNamedSave()" style="font-size:9px;padding:2px 8px">💾 Salvar</button>
+    <button class="mode-btn therm-preset-del" onclick="thermNamedDelete()" style="font-size:9px;padding:2px 8px">🗑 Excluir</button>
+    <div class="therm-ctrl-sep"></div>
+    <button class="mode-btn" onclick="thermExportJSON()" style="font-size:9px;padding:2px 8px" title="Exportar todos os presets como arquivo JSON">⬇ JSON</button>
+    <label class="mode-btn" style="position:relative;overflow:hidden;font-size:9px;padding:2px 8px;cursor:pointer" title="Importar presets de um arquivo JSON">📁 JSON<input type="file" accept=".json" onchange="thermImportJSON(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0"></label>
+  </div>
+  <!-- ── Roll de etiquetas ── -->
+  <div class="therm-scroll" id="therm-scroll">
+    <div class="therm-roll" id="therm-roll"></div>
+    <div class="therm-info-bar" id="therm-info-bar" style="margin-top:12px">
+      <span id="therm-dim-info" style="color:var(--tx2);font-weight:700">80×50mm</span>
+      <span style="color:var(--tx4)">·</span>
+      <span id="therm-tag-count">0 etiquetas</span>
+    </div>
+  </div>
 </div>
 </div>
 <div id="toastwrap"></div>
@@ -641,6 +764,8 @@ let zoom=1.0,bcTimer=null,jsBCLoaded=false,bcProduct=null;
 let cosmosTokens=[],cosmosIdx=0;
 let priceTabMode=true,priceTabData=new Map();
 let gridOn=false;
+let thermMode=false;
+let thermPrefs={w:80,margin:2,h:50,szDScale:100,szPScale:100,szUScale:100,szSScale:100,pdScale:100,autoCut:true};
 
 // Referência fixa da grade — sempre tags[0], salva snapshot ao ativar ou ao mover/redimensionar tag[0]
 let _gridRef=null;
@@ -1115,6 +1240,341 @@ function doLocalFetch(code){
   }
 }
 // ── FIM PRICETAB ──────────────────────────────────────────
+
+// ── MODO TÉRMICA ──────────────────────────────────────────
+
+/* ---- Inicializa predefinição salva ---- */
+(function(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('thermPrefs')||'null');
+    if(saved&&typeof saved==='object'){
+      Object.assign(thermPrefs,saved);
+      // Aplica nos controles após DOM pronto
+      document.addEventListener('DOMContentLoaded',applyThermPrefsToUI,{once:true});
+      // fallback se DOM já pronto
+      if(document.readyState!=='loading')applyThermPrefsToUI();
+    }
+  }catch(e){}
+})();
+
+function applyThermPrefsToUI(){
+  const vals=['80','58','76'];
+  const tw=String(thermPrefs.w||80);
+  const selW=G('therm-w');
+  if(selW){selW.value=vals.includes(tw)?tw:'custom';if(!vals.includes(tw)){const cw=G('therm-w-custom');if(cw){cw.style.display='block';cw.value=tw;const cww=G('therm-custom-wrap');if(cww)cww.style.display='block';}}}
+  const th=G('therm-h');if(th)th.value=thermPrefs.h||50;
+  const tm=G('therm-margin');if(tm)tm.value=String(thermPrefs.margin||2);
+  const setSlider=(id,valId,key)=>{const el=G(id),vEl=G(valId);const v=thermPrefs[key]||100;if(el)el.value=v;if(vEl)vEl.textContent=v+'%';};
+  setSlider('therm-szd','therm-szd-val','szDScale');
+  setSlider('therm-szp','therm-szp-val','szPScale');
+  setSlider('therm-szu','therm-szu-val','szUScale');
+  setSlider('therm-szs','therm-szs-val','szSScale');
+  setSlider('therm-pd','therm-pd-val','pdScale');
+  const ac=G('therm-autocut');if(ac)ac.checked=thermPrefs.autoCut!==false;
+}
+
+/* ---- Troca de modo ---- */
+function setViewMode(mode){
+  thermMode=(mode==='therm');
+  const sw=G('swrap');if(sw)sw.style.display=thermMode?'none':'';
+  const tw=G('therm-wrap');if(tw){if(thermMode)tw.classList.add('on');else tw.classList.remove('on');}
+  G('btn-mode-a4')?.classList.toggle('on',!thermMode);
+  G('btn-mode-therm')?.classList.toggle('on',thermMode);
+  const hideWhenTherm=['btn-undo','btn-grid','cnt'];
+  hideWhenTherm.forEach(id=>{const el=G(id);if(el)el.style.display=thermMode?'none':'';});
+  const zctrl=document.querySelector('.zctrl');if(zctrl)zctrl.style.display=thermMode?'none':'';
+  document.querySelectorAll('.pvbtn:not(.mode-btn):not(#btn-mode-a4):not(#btn-mode-therm)').forEach(el=>{el.style.display=thermMode?'none':'';});
+  if(thermMode)renderThermPrev();
+}
+
+/* ---- Lê largura actual do papel ---- */
+function getThermW(){
+  const sel=G('therm-w');if(!sel)return thermPrefs.w||80;
+  const v=sel.value;
+  if(v==='custom')return parseFloat(G('therm-w-custom')?.value||80)||80;
+  return parseFloat(v)||80;
+}
+
+/* ---- Sincroniza select com termPrefs e re-renderiza ---- */
+function onThermChange(){
+  const isCustom=G('therm-w')?.value==='custom';
+  const cwEl=G('therm-w-custom');if(cwEl)cwEl.style.display=isCustom?'inline-block':'none';
+  thermPrefs.w=getThermW();
+  thermPrefs.margin=parseFloat(G('therm-margin')?.value||2)||2;
+  thermPrefs.h=parseFloat(G('therm-h')?.value||50)||50;
+  if(thermMode)renderThermPrev();
+}
+
+/* ---- Sliders de escala de fonte ---- */
+function onThermScaleChange(key,val,labelId){
+  thermPrefs[key]=parseFloat(val)||100;
+  const lEl=G(labelId);if(lEl)lEl.textContent=Math.round(thermPrefs[key])+'%';
+  if(thermMode)renderThermPrev();
+}
+
+/* ---- Preset rápido (chamado da aba Exportar) ---- */
+function thermPreset(w,h){
+  const vals=['80','58','76'],sel=G('therm-w');
+  if(vals.includes(String(w))){if(sel)sel.value=String(w);const cw=G('therm-w-custom');if(cw)cw.style.display='none';}
+  else{if(sel)sel.value='custom';const cw=G('therm-w-custom');if(cw){cw.style.display='inline-block';cw.value=w;}}
+  const th=G('therm-h');if(th)th.value=h;
+  thermPrefs.w=parseFloat(w);thermPrefs.h=parseFloat(h);
+  if(!thermMode)setViewMode('therm');else renderThermPrev();
+  st('Formato '+w+'×'+h+'mm selecionado','ok');
+}
+
+/* ---- Salva predefinição no localStorage ---- */
+function saveThermPreset(){
+  thermPrefs.w=getThermW();
+  thermPrefs.margin=parseFloat(G('therm-margin')?.value||2)||2;
+  thermPrefs.h=parseFloat(G('therm-h')?.value||50)||50;
+  try{localStorage.setItem('thermPrefs',JSON.stringify(thermPrefs));}catch(e){}
+  const ok=G('therm-preset-ok');if(ok){ok.style.display='inline';clearTimeout(ok._t);ok._t=setTimeout(()=>ok.style.display='none',2000);}
+  st('Predefinição térmica salva!','ok');
+}
+
+/* ---- Reseta predefinição ---- */
+function resetThermPreset(){
+  thermPrefs={w:80,margin:2,h:50,szDScale:100,szPScale:100,szUScale:100,szSScale:100,pdScale:100};
+  try{localStorage.removeItem('thermPrefs');}catch(e){}
+  applyThermPrefsToUI();
+  if(thermMode)renderThermPrev();
+  st('Predefinição resetada','ok');
+}
+
+/* ──────── PRESETS NOMEADOS ──────── */
+function thermGetNamedPresets(){try{return JSON.parse(localStorage.getItem('thermNamedPresets')||'[]');}catch{return[];}}
+function thermSetNamedPresets(ps){try{localStorage.setItem('thermNamedPresets',JSON.stringify(ps));}catch(e){}}
+
+function thermRenderNamedSel(){
+  const sel=G('therm-named-sel');if(!sel)return;
+  const cur=sel.value;
+  const ps=thermGetNamedPresets();
+  sel.innerHTML='<option value="">— Selecionar preset —</option>'+ps.map((p,i)=>`<option value="${i}">${p.name}</option>`).join('');
+  // Tenta restaurar seleção
+  if(cur!==''){const idx=ps.findIndex((_,i)=>String(i)===cur);if(idx>=0)sel.value=String(idx);}
+}
+
+function thermNamedLoad(idxStr){
+  if(idxStr==='')return;
+  const ps=thermGetNamedPresets();
+  const p=ps[parseInt(idxStr)];if(!p)return;
+  Object.assign(thermPrefs,p.prefs);
+  applyThermPrefsToUI();
+  if(thermMode)renderThermPrev();
+  const nameInp=G('therm-named-name');if(nameInp)nameInp.value=p.name;
+  st('Preset "'+p.name+'" carregado','ok');
+}
+
+function thermNamedSave(){
+  const nameInp=G('therm-named-name');
+  const name=(nameInp?.value||'').trim();
+  if(!name){st('Digite um nome para o preset','err');nameInp?.focus();return;}
+  // Ler prefs atuais da UI
+  thermPrefs.w=getThermW();
+  thermPrefs.margin=parseFloat(G('therm-margin')?.value||2)||2;
+  thermPrefs.h=parseFloat(G('therm-h')?.value||50)||50;
+  const ps=thermGetNamedPresets();
+  const ex=ps.findIndex(p=>p.name===name);
+  const entry={name,prefs:JSON.parse(JSON.stringify(thermPrefs))};
+  if(ex>=0)ps[ex]=entry;else ps.unshift(entry);
+  thermSetNamedPresets(ps);
+  thermRenderNamedSel();
+  // Seleciona o preset recém-salvo
+  const newIdx=thermGetNamedPresets().findIndex(p=>p.name===name);
+  const sel=G('therm-named-sel');if(sel&&newIdx>=0)sel.value=String(newIdx);
+  st('"'+name+'" salvo!','ok');
+}
+
+function thermNamedDelete(){
+  const sel=G('therm-named-sel');
+  if(!sel||sel.value===''){st('Selecione um preset para excluir','err');return;}
+  const ps=thermGetNamedPresets();
+  const p=ps[parseInt(sel.value)];if(!p)return;
+  if(!confirm('Excluir preset "'+p.name+'"?'))return;
+  ps.splice(parseInt(sel.value),1);
+  thermSetNamedPresets(ps);
+  thermRenderNamedSel();
+  st('Preset excluído','ok');
+}
+
+function thermExportJSON(){
+  const ps=thermGetNamedPresets();
+  const data={_type:'etiq_therm_presets_v1',date:new Date().toISOString(),presets:ps};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='presets_termicos.json';a.click();
+  st('Presets exportados!');
+}
+
+function thermImportJSON(inp){
+  if(!inp.files||!inp.files[0])return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      let presets=[];
+      if(Array.isArray(data))presets=data;
+      else if(data._type&&Array.isArray(data.presets))presets=data.presets;
+      else{st('Arquivo JSON inválido','err');return;}
+      if(!presets.length){st('Nenhum preset encontrado','err');return;}
+      const existing=thermGetNamedPresets();
+      let added=0;
+      presets.forEach(p=>{
+        if(p&&p.name&&p.prefs){
+          const ex=existing.findIndex(e=>e.name===p.name);
+          if(ex>=0)existing[ex]=p;else{existing.unshift(p);added++;}
+        }
+      });
+      thermSetNamedPresets(existing);
+      thermRenderNamedSel();
+      st(presets.length+' preset(s) importado(s)!','ok');
+    }catch(e){st('Erro ao ler arquivo','err');}
+  };
+  r.readAsText(inp.files[0]);
+  inp.value='';
+}
+/* ──────── FIM PRESETS NOMEADOS ──────── */
+
+/* ---- Adapta um tag do A4 para o formato térmico ---- */
+function makeThermTag(t){
+  const labelW=Math.max(15,thermPrefs.w-thermPrefs.margin*2);
+  return{
+    ...t,
+    wMM:labelW, hMM:thermPrefs.h,
+    x:0, y:0,
+    szD: Math.max(6, Math.round((t.szD||12)*thermPrefs.szDScale/100)),
+    szP: Math.max(8, Math.round((t.szP||28)*thermPrefs.szPScale/100)),
+    szU: Math.max(5, Math.round((t.szU||10)*thermPrefs.szUScale/100)),
+    szStore: Math.max(6, Math.round((t.szStore||11)*thermPrefs.szSScale/100)),
+    storeH: Math.max(12, Math.round((t.storeH||28)*thermPrefs.szSScale/100)),
+    pd: Math.max(0, Math.round((t.pd||6)*thermPrefs.pdScale/100)),
+  };
+}
+
+/* ── Renderiza todas as etiquetas no roll térmico ── */
+function renderThermPrev(){
+  const roll=G('therm-roll');if(!roll)return;
+  // sincroniza prefs com controles (para caso seja chamado sem passar por onThermChange)
+  thermPrefs.w=getThermW();
+  thermPrefs.margin=parseFloat(G('therm-margin')?.value||2)||2;
+  thermPrefs.h=parseFloat(G('therm-h')?.value||50)||50;
+  const labelW=Math.max(15,thermPrefs.w-thermPrefs.margin*2);
+  const paperW=thermPrefs.w;
+  const labelH=thermPrefs.h;
+
+  if(!tags.length){
+    roll.innerHTML='<div class="therm-empty">📄 Nenhuma etiqueta adicionada.<br>Crie etiquetas na aba <b>✏️ Criar</b><br>e elas aparecerão aqui adaptadas<br>para impressão térmica.</div>';
+    const info=G('therm-dim-info');if(info)info.textContent=Math.round(paperW)+'×'+Math.round(labelH)+'mm';
+    const cnt=G('therm-tag-count');if(cnt)cnt.textContent='0 etiquetas';
+    return;
+  }
+
+  // Calcula escala de exibição
+  const scroll=G('therm-scroll');
+  const avW=scroll?scroll.clientWidth-32:260;
+  const maxW=Math.min(avW,400);
+  const wpx=labelW*MM*SC, hpx=labelH*MM*SC;
+  const paperWpx=paperW*MM*SC;
+  const sc2=Math.min(maxW/paperWpx,2.2);
+  const dispPaperW=Math.round(paperWpx*sc2);
+  const dispLabelW=Math.round(wpx*sc2);
+  const dispLabelH=Math.round(hpx*sc2);
+  const dispPad=Math.round(thermPrefs.margin*MM*SC*sc2);
+
+  let html='';
+  tags.forEach((t,i)=>{
+    const tt=makeThermTag(t);
+    const labelInner=buildOneTagHtml(tt);
+    if(i>0){
+      html+=`<div class="therm-cut-line" style="width:${dispPaperW}px"><span class="therm-cut-txt">✂</span></div>`;
+    }
+    html+=`<div class="therm-label-wrap">`;
+    html+=`<div class="therm-paper-bg" style="width:${dispPaperW}px;padding:0 ${dispPad}px;">`;
+    html+=`<div style="width:${dispLabelW}px;height:${dispLabelH}px;overflow:hidden;flex-shrink:0;position:relative">`;
+    html+=`<div style="transform:scale(${sc2.toFixed(4)});transform-origin:top left;pointer-events:none">${labelInner}</div>`;
+    html+='</div></div></div>';
+  });
+  roll.innerHTML=html;
+
+  // Renderiza códigos de barras em cada etiqueta
+  tags.forEach((t,i)=>{
+    const tt=makeThermTag(t);
+    if(tt.showBarcode&&tt.barcodeVal){
+      const allBcDivs=roll.querySelectorAll('[id^="bc-area"]');
+      const bcEl=roll.querySelector(`[data-therm-bc="${i}"]`);
+      // fallback: usar id sintético
+      const fakeId='th'+i;
+      const container=roll.querySelectorAll('.therm-label-wrap')[i];
+      if(container){
+        const bcTarget=container.querySelector('[style*="font-family:monospace"]');
+        if(bcTarget){bcTarget.parentElement.id='bc-area'+fakeId;renderBCEl({...tt,id:fakeId});}
+      }
+    }
+  });
+
+  const info=G('therm-dim-info');if(info)info.textContent=Math.round(paperW)+'×'+Math.round(labelH)+'mm · útil '+Math.round(labelW)+'mm';
+  const cnt=G('therm-tag-count');if(cnt)cnt.textContent=tags.length+' etiqueta'+(tags.length===1?'':'s');
+}
+
+/* ── Monta HTML mm para impressão de um tag térmico ── */
+function buildOneThermTagMm(t){
+  const stHmm=t.showStore?((t.storeH||28)/MM/SC).toFixed(2):'0';
+  const sphmm=((t.storePadH!==undefined?t.storePadH:8)/MM/SC).toFixed(2);
+  const spvmm=((t.storePadV!==undefined?t.storePadV:4)/MM/SC).toFixed(2);
+  const sgimm=((t.storeGapItems!==undefined?t.storeGapItems:6)/MM/SC).toFixed(2);
+  const sAln=t.storeAln||'center';
+  const tAln=sAln==='center'?'center':sAln==='flex-end'?'flex-end':'flex-start';
+  const brd=t.showSBorder?`border-bottom:${t.sBorderW||0.5}px solid ${t.sBorderColor||'#ff9999'};`:'';
+  const lH=t.logoB64?`<img src="${t.logoB64}" style="height:${Math.max(0,parseFloat(stHmm)-parseFloat(spvmm)*2).toFixed(2)}mm;object-fit:contain;flex-shrink:0" alt="">`:'' ;
+  const nH=t.storeName?`<span style="font-size:${t.szStore||11}pt;color:${t.sTx};font-family:${t.font};font-weight:700;white-space:nowrap;display:block">${t.storeName}</span>`:'';
+  const lcH=(t.showLoc&&t.storeLoc)?`<span style="font-size:${t.szLoc||8}pt;color:${t.sLocColor||'#ffcccc'};font-family:${t.font};white-space:nowrap;display:block">${t.storeLoc}</span>`:'';
+  const storeH=t.showStore&&(t.storeName||t.logoB64)?`<div style="height:${stHmm}mm;background:${t.sBg};display:flex;align-items:center;justify-content:${sAln};gap:${sgimm}mm;overflow:hidden;padding:${spvmm}mm ${sphmm}mm;flex-shrink:0;${brd}">${lH}<div style="display:flex;flex-direction:column;align-items:${tAln};min-width:0;overflow:hidden">${nH}${lcH}</div></div>`:'';
+  const fd=t.fmtD||{},dsh=fd.shadow?'1px 1px 2px rgba(0,0,0,.4)':'none';
+  const descH=t.showDesc?`<div style="font-size:${t.szD}pt;color:${t.tx};text-align:${t.alnD};font-family:${t.font};line-height:${t.dLH||1.2};letter-spacing:${t.dLS||0}px;word-break:break-word;overflow:hidden;font-weight:${fd.bold?'700':'400'};font-style:${fd.italic?'italic':'normal'};text-transform:${fd.upper?'uppercase':fd.title?'capitalize':'none'};text-shadow:${dsh}">${fd.upper?t.desc.toUpperCase():t.desc}</div>`:'';
+  const fp=t.fmtP||{},cs3=t.fmtCS||{};
+  const psh=fp.shadow?'1px 1px 3px rgba(0,0,0,.5)':'none',pol=fp.outline?`-webkit-text-stroke:1pt ${t.bg||'#fff'};`:'';
+  const prSz=t.szP||28,csSzR=(t.csSzRatio||100)/100,csSz=Math.round(prSz*csSzR);
+  const pls=t.pLS||0,csls=t.csLS||0,csgap=((t.csGap||4)/MM/SC).toFixed(2);
+  const prCol=t.pr||'#cc0000',csCol=t.csColor||prCol,uCol=t.unitColor||t.tx||'#444';
+  const uPos=t.unitPos||'after';
+  const csText=t.csText||'R$',csPos=t.csPos||'before';
+  const csSupStyle=cs3.sup?`vertical-align:super;font-size:${Math.round(csSz*.65)}pt;`:'';
+  const csSpan=csText&&csPos!=='none'?`<span style="font-size:${cs3.sup?Math.round(csSz*.65):csSz}pt;color:${csCol};font-weight:${cs3.bold?'700':'600'};font-family:${t.font};line-height:1;white-space:nowrap;font-style:${cs3.italic?'italic':'normal'};letter-spacing:${csls}px;${csSupStyle}">${csText}</span>`:'';
+  const numSpan=`<span style="font-size:${prSz}pt;color:${prCol};font-weight:${fp.bold?'700':'400'};font-style:${fp.italic?'italic':'normal'};line-height:1;white-space:nowrap;font-family:${t.font};text-shadow:${psh};letter-spacing:${pls}px;${pol}">${t.price||'0,00'}</span>`;
+  const uStyle=`font-size:${t.szU||10}pt;color:${uCol};line-height:1;white-space:nowrap;font-family:${t.font}`;
+  const uSpan=t.showUnit&&t.unit&&uPos==='after'?`<span style="${uStyle}">/${t.unit}</span>`:'';
+  const jmap={left:'flex-start',center:'center',right:'flex-end'};
+  let row='';
+  if(uPos==='above'||uPos==='below'){const uBlock=`<div style="${uStyle};text-align:${jmap[t.alnP]};display:block">${t.unit}</div>`;const r=csPos==='after'?`${numSpan}${csSpan?'&nbsp;'+csSpan:''}`:csPos==='none'?numSpan:`${csSpan}${numSpan}`;row=`<div style="display:flex;flex-direction:column;align-items:${jmap[t.alnP]}">${uPos==='above'&&t.showUnit?uBlock:''}<div style="display:flex;align-items:baseline;gap:${csgap}mm">${r}</div>${uPos==='below'&&t.showUnit?uBlock:''}</div>`;}
+  else{const r=csPos==='after'?`${numSpan}${uSpan}${csSpan?'&nbsp;'+csSpan:''}`:csPos==='none'?`${numSpan}${uSpan}`:`${csSpan}${numSpan}${uSpan}`;row=`<span style="display:inline-flex;align-items:baseline;gap:${csgap}mm">${r}</span>`;}
+  const priceH=`<div style="display:flex;align-items:baseline;justify-content:${jmap[t.alnP]};overflow:hidden;flex-shrink:0;font-family:${t.font}">${row}</div>`;
+  const oldH=buildOld(t);const prGrp=`<div style="flex-shrink:0">${oldH?'<div>'+oldH+'</div>':''}${priceH}</div>`;
+  const base_mm=((t.pd||6)/MM/SC).toFixed(2);
+  const bcNumStyle=`flex-shrink:0;background:${t.barcodeBg||'#fff'};display:flex;align-items:center;justify-content:center;overflow:hidden;${t.bcSep?'border-top:0.5pt solid #ccc;':''}`;
+  const bcH2=t.showBarcode&&t.barcodeVal?`<div style="${bcNumStyle};padding:2pt"><span style="font-family:monospace;font-size:${t.bcFsz||8}pt;color:${t.barcodeColor||'#000'};letter-spacing:.08em">${t.barcodeVal}</span></div>`:'';
+  const bgapmm=t.bodyGap>0?`height:${(t.bodyGap/MM/SC).toFixed(2)}mm;flex-shrink:0`:'flex:1;min-height:0';
+  const bcPos=t.bcPos||'bottom';
+  return `<div style="width:${t.wMM}mm;height:${t.hMM}mm;background:${t.bg};border:${t.bw||1}px solid ${t.bd};box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden">${storeH}${bcPos==='top'?bcH2:''}<div style="flex:1;display:flex;flex-direction:column;overflow:hidden;padding:${base_mm}mm"><div style="flex:1;display:flex;flex-direction:column;overflow:hidden"><div style="${bgapmm}"></div>${descH}${prGrp}</div></div>${bcPos!=='top'?bcH2:''}</div>`;
+}
+
+/* ── Impressão térmica de todas as etiquetas ── */
+function printThermal(){
+  if(!tags.length){st('Adicione etiquetas na folha A4 primeiro!','err');return;}
+  // Sincroniza prefs com controles
+  thermPrefs.w=getThermW();
+  thermPrefs.margin=parseFloat(G('therm-margin')?.value||2)||2;
+  thermPrefs.h=parseFloat(G('therm-h')?.value||50)||50;
+  const paperW=thermPrefs.w,margin=thermPrefs.margin,labelW=Math.max(15,paperW-margin*2);
+  const thermTags=tags.map(t=>makeThermTag(t));
+  const labelsHtml=thermTags.map(tt=>`<div class="pg">${buildOneThermTagMm(tt)}</div>`).join('');
+  const w=window.open('','_blank','width=480,height=680');
+  if(!w){st('Pop-up bloqueado — permita pop-ups para imprimir','err');return;}
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Etiquetas Térmicas</title><style>@page{size:${paperW}mm auto;margin:${margin}mm}*{margin:0;padding:0;box-sizing:border-box}body{width:${labelW}mm;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.pg{width:${labelW}mm;height:${thermPrefs.h}mm;position:relative;overflow:hidden;${thermPrefs.autoCut!==false?'page-break-after:always':''}}</style></head><body>${labelsHtml}<script>window.onload=function(){setTimeout(function(){window.addEventListener('afterprint',function(){window.close();});window.print();},500);}<\/script></body></html>`);
+  w.document.close();
+  st('Janela de impressão aberta! ('+tags.length+' etiqueta'+(tags.length===1?'':'s')+')','ok');
+}
+// ── FIM MODO TÉRMICA ──────────────────────────────────────
+
 function loadJsBC(){return new Promise((res,rej)=>{if(jsBCLoaded||window.JsBarcode){jsBCLoaded=true;res();return;}const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js';s.onload=()=>{jsBCLoaded=true;res();};s.onerror=rej;document.head.appendChild(s);});}
 function bcRenderInto(el,code,opts={}){
   if(!code){el.innerHTML='<span style="font-size:10px;color:#aaa">Digite o código para visualizar</span>';return;}
@@ -1968,7 +2428,7 @@ function buildTagsHtml(){
 
 function _zoomReset(){const prev=zoom;if(zoom!==1){setZoom(100);G('zoom-sl').value=100;}return prev;}
 function _zoomRestore(prev){if(prev!==1){setZoom(Math.round(prev*100));G('zoom-sl').value=Math.round(prev*100);}}
-function printTags(){if(!tags.length){st('Adicione etiquetas!');return;}const w=window.open('','_blank','width=900,height=720');if(!w){st('Pop-up bloqueado','err');return;}w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Etiquetas</title><style>@page{size:A4 portrait;margin:0}*{margin:0;padding:0;box-sizing:border-box}body{width:210mm;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.pg{width:210mm;height:297mm;position:relative;overflow:hidden}</style></head><body><div class="pg">${buildTagsHtml()}</div><script>window.onload=function(){setTimeout(function(){window.print();},400);}<\/script></body></html>`);w.document.close();}
+function printTags(){if(!tags.length){st('Adicione etiquetas!');return;}const w=window.open('','_blank','width=900,height=720');if(!w){st('Pop-up bloqueado','err');return;}w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Etiquetas</title><style>@page{size:A4 portrait;margin:0}*{margin:0;padding:0;box-sizing:border-box}body{width:210mm;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.pg{width:210mm;height:297mm;position:relative;overflow:hidden}</style></head><body><div class="pg">${buildTagsHtml()}</div><script>window.onload=function(){setTimeout(function(){window.addEventListener('afterprint',function(){window.close();});window.print();},400);}<\/script></body></html>`);w.document.close();}
 function exportHTML(){if(!tags.length){st('Adicione etiquetas!');return;}const _hz=_zoomReset();try{const html2=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Etiquetas</title><style>@page{size:A4 portrait;margin:0}*{margin:0;padding:0;box-sizing:border-box}body{width:210mm;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.pg{width:210mm;height:297mm;position:relative;background:#fff;overflow:hidden;page-break-after:always}@media screen{body{padding:8mm;background:#888}.pg{box-shadow:0 4px 20px rgba(0,0,0,.4)}}</style></head><body><div class="pg">${buildTagsHtml()}</div></body></html>`;const blob=new Blob([html2],{type:'text/html;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='etiquetas.html';a.click();st('HTML exportado!','ok');}finally{_zoomRestore(_hz);}}
 function exportWord(){if(!tags.length){st('Adicione etiquetas!');return;}const _wz=_zoomReset();try{const h=buildTagsHtml(),g=tags.map(t=>{const xm=PX2MM(t.x).toFixed(3),ym=PX2MM(t.y).toFixed(3);return`<div style="position:absolute;left:${xm}mm;top:${ym}mm;width:${t.wMM}mm;height:${t.hMM}mm;border:0.5pt dashed #bbb;box-sizing:border-box;pointer-events:none"></div>`;}).join('');const mhtml=`MIME-Version: 1.0\r\nContent-Type: multipart/related; boundary="B"; type="text/html"\r\n\r\n--B\r\nContent-Type: text/html; charset="utf-8"\r\n\r\n<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><style>@page WordSection1{size:210mm 297mm;margin:0}div.WordSection1{page:WordSection1}*{margin:0;padding:0;box-sizing:border-box}</style></head><body><div class="WordSection1" style="width:210mm;height:297mm;position:relative;background:white;overflow:hidden">${h}${g}</div></body></html>\r\n--B--`;const blob=new Blob([mhtml],{type:'application/msword'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='etiquetas.doc';a.click();st('Word exportado!','ok');}finally{_zoomRestore(_wz);}}
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
@@ -2267,6 +2727,7 @@ const PRESETS={
   gistLoadCfg();
   try{ applyConf(DEFAULT_CFG); }catch(e){}
   reSum();updP();renderProjList();renderPresets();updUnitPills();
+  thermRenderNamedSel();
   addTag();
   document.querySelectorAll('.tab').forEach((b,i)=>{b.onclick=function(){goTab(['quick','cfg','lista','exp'][i],this);};});
   // Auto-receber projetos do Gist ao abrir
