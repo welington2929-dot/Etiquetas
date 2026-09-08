@@ -153,7 +153,7 @@ input[type=color]{width:32px;height:29px;padding:2px;border:1px solid var(--id);
 .ptrow.on{background:var(--acd);border-color:var(--ac)}
 .ptri{flex:1;min-width:0}
 .ptrn{font-size:15px;font-weight:700;color:var(--tx1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ptrp{font-size:13px;color:var(--tx3);margin-top:3px}
+.ptrp{font-size:16px;font-weight:700;color:var(--tx2);margin-top:4px}
 .ptbc{flex-shrink:0;min-width:118px;max-width:150px;padding:6px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--bd1);text-align:center}
 .ptbc span{font-family:monospace;font-size:15px;font-weight:700;color:var(--tx1);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .ptbc.empty{background:transparent;border-color:transparent}
@@ -2086,7 +2086,7 @@ function quickConfirm(){
 }
 
 // ── BUSCA DE PRODUTOS (tecla K) ──────────────────────────────
-let ptProducts=[],ptFilteredList=[],ptHi=0,ptOpen=false;
+let ptProducts=[],ptFilteredList=[],ptHi=-1,ptOpen=false;
 const PT_PAGE_SIZE=20;
 let ptPage=0;
 // Remove acentos/cedilha e coloca em minúsculo, para a busca achar "acucar" mesmo com o produto escrito "Açúcar"
@@ -2158,7 +2158,8 @@ function ptRenderResults(){
     scored.sort((a,b)=>a.rank-b.rank);
     ptFilteredList=scored.map(s=>s.p);
   }
-  if(ptHi>=ptFilteredList.length)ptHi=Math.max(0,ptFilteredList.length-1);
+  if(!ptFilteredList.length)ptHi=-1;
+  else if(ptHi<0||ptHi>=ptFilteredList.length)ptHi=0;
   const list=G('pt-search-list'),cnt=G('pt-search-count');
   if(cnt)cnt.textContent=ptFilteredList.length+' produto'+(ptFilteredList.length!==1?'s':'');
   if(!ptProducts.length){
@@ -2172,8 +2173,12 @@ function ptRenderResults(){
     return;
   }
   const totalPages=Math.max(1,Math.ceil(ptFilteredList.length/PT_PAGE_SIZE));
-  const hiPage=Math.floor(ptHi/PT_PAGE_SIZE);
-  ptPage=Math.min(Math.max(hiPage,0),totalPages-1);
+  if(ptHi>=0){
+    const hiPage=Math.floor(ptHi/PT_PAGE_SIZE);
+    ptPage=Math.min(Math.max(hiPage,0),totalPages-1);
+  }else{
+    ptPage=Math.min(Math.max(ptPage,0),totalPages-1);
+  }
   const start=ptPage*PT_PAGE_SIZE;
   const pageItems=ptFilteredList.slice(start,start+PT_PAGE_SIZE);
   list.innerHTML=pageItems.map((p,localI)=>{
@@ -2204,8 +2209,8 @@ function ptChangeQty(i,d){
 }
 function ptOnSearchKey(e){
   if(e.key==='Escape'){e.preventDefault();ptCloseSearch();return;}
-  if(e.key==='ArrowDown'){e.preventDefault();if(ptHi<ptFilteredList.length-1){ptHi++;ptRenderResults();}return;}
-  if(e.key==='ArrowUp'){e.preventDefault();if(ptHi>0){ptHi--;ptRenderResults();}return;}
+  if(e.key==='ArrowDown'){e.preventDefault();if(ptHi<0){ptHi=ptPage*PT_PAGE_SIZE;}else if(ptHi<ptFilteredList.length-1){ptHi++;}ptRenderResults();return;}
+  if(e.key==='ArrowUp'){e.preventDefault();if(ptHi<0){ptHi=ptPage*PT_PAGE_SIZE;}else if(ptHi>0){ptHi--;}ptRenderResults();return;}
   if(e.key==='ArrowRight'){e.preventDefault();ptChangeQty(ptHi,1);return;}
   if(e.key==='ArrowLeft'){e.preventDefault();ptChangeQty(ptHi,-1);return;}
   if(e.key==='PageDown'){e.preventDefault();ptGoPage(1);return;}
@@ -2230,8 +2235,7 @@ function addProductToPanel(product,qty){
     buildEl(t);
     lastId=t.id;
   }
-  selSet.clear();
-  if(lastId!==null){selSet.add(lastId);doSel(lastId);}
+  sel=null;selSet.clear();upSelVis();
   upCount();
   renderList();
   st(qty+' etiqueta'+(qty!==1?'s':'')+' adicionada'+(qty!==1?'s':'')+' — '+product.desc,'ok');
